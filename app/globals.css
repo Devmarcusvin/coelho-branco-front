@@ -7,10 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-<<<<<<< HEAD
   --font-sans: var(--font-league-spartan), system-ui, sans-serif;
-=======
-  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -49,7 +46,6 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
->>>>>>> b756be2 (Atualiza frontend)
 }
 
 :root {
@@ -125,19 +121,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-<<<<<<< HEAD
-}
-
-.font-league-spartan {
-  font-family: var(--font-league-spartan);
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-=======
   body {
     @apply bg-background text-foreground;
   }
@@ -145,4 +128,11 @@ body {
     @apply font-sans;
   }
 }
->>>>>>> b756be2 (Atualiza frontend)
+
+.font-league-spartan {
+  font-family: var(--font-league-spartan);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
