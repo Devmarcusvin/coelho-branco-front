@@ -60,7 +60,7 @@ export default function Home() {
           </div>
           
           <button className="bg-[#6A38F3] h-[50px] w-[504px] rounded-[72px] text-[25px] font-semibold font-[family-name:var(--font-league-spartan)] text-white hover:bg-[#5028C4] transition-all duration-300 cursor-pointer">
-            ENTRAR
+            CRIAR CONTA
           </button>
 
           <div className="flex flex-row justify-start w-full gap-2">
