@@ -1,42 +1,41 @@
 'use client';
 import { useState } from "react";
+import axios from "axios";
+import api from "../services/api";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
-  const [carregando, setCarregando] = useState(false);
 
-  async function handleLogin() {
+  async function Login(){
     setErro(null);
-    if (!email || !senha) { 
-      setErro("Preencha todos os campos."); 
-      return; 
+    if(!email || !senha){
+      setErro("Preencha todos os campos.");
+      return;
     }
-
-    setCarregando(true);
 
     try {
-      const res = await fetch('http://localhost:3000/users/login', { //nest usando porta 3000
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha }),
+      const {data} = await api.post('/users/login', {
+        email,
+        senha,
       });
 
-      if (!res.ok) throw new Error('Email ou senha incorretos');
+      localStorage.setItem('usuario', JSON.stringify(data));
+      router.push('/'); //colocar aqui para onde o usuario é redirecionado após login
+    } catch(error) {
+      if(axios.isAxiosError(error)){
+        setErro("Email ou senha incorretos.");
+      }else {
+        setErro("Erro inesperado");
+      }
+  }
 
-      const usuario = await res.json();
-      localStorage.setItem('usuario', JSON.stringify(usuario));
-      //router.push leva usuário a outra página
-      router.push('/'); //aqui deve ser declarada a tela que aparece após o login
-    } catch (e) {
-      setErro(e instanceof Error ? e.message : 'Erro inesperado');
-    } finally {
-      setCarregando(false);
-    }
+
+
   }
 
   return (
@@ -58,26 +57,26 @@ export default function Home() {
           <input
             type="text" placeholder="Email" value={email}
             onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+            onKeyDown={(e) => e.key === 'Enter' && Login()}
             className="bg-[#F6F3E4] h-[46px] w-[504px] text-[#171918] placeholder:text-[#858585] font-[family-name:var(--font-league-spartan)] rounded-[72px] pl-7 
               placeholder:text-[25px] text-[25px] placeholder:font-[300] focus:border-[#6A38F3] focus:outline-2 focus:outline-[#6A38F3]"
           />
 
           <div className="relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type={mostrarSenha ? "text" : "password"}
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+              onKeyDown={(e) => e.key === 'Enter' && Login()}
               className="bg-[#F6F3E4] h-[46px] w-[504px] text-[#171918] placeholder:text-[#858585] font-[family-name:var(--font-league-spartan)] rounded-[72px] pl-7 
                 placeholder:text-[25px] placeholder:font-[300] text-[25px] focus:border-[#6A38F3] focus:outline-2 focus:outline-[#6A38F3]"
             />
-            {showPassword ? (
-              <img src="/icon_ocultar.png" onClick={() => setShowPassword(false)} alt="Ocultar senha"
+            {mostrarSenha ? (
+              <img src="/icon_ocultar.png" onClick={() => setMostrarSenha(false)} alt="Ocultar senha"
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer opacity-40" />
             ) : (
-              <img src="/iconamoon_eye-thin.svg" onClick={() => setShowPassword(true)} alt="Mostrar senha"
+              <img src="/iconamoon_eye-thin.svg" onClick={() => setMostrarSenha(true)} alt="Mostrar senha"
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer" />
             )}
           </div>
@@ -91,7 +90,7 @@ export default function Home() {
             Esqueceu sua senha?</p>
 
           <button
-            onClick={handleLogin} disabled={carregando}
+            onClick={Login}
             className="bg-[#6A38F3] h-[50px] w-[504px] rounded-[72px] text-[25px] font-semibold font-[family-name:var(--font-league-spartan)] hover:bg-[#5028C4] 
               transition-all duration-300 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">ENTRAR</button>
 
