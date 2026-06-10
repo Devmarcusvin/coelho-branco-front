@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useFeedData } from "@/hooks/useFeedData";
 
 // COMPONENTE AUXILIAR DE SCROLL (COMPARTILHADO POR AMBAS AS TELAS)
 function ScrollContainer({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,7 @@ function ScrollContainer({ children }: { children: React.ReactNode }) {
       ref={ref}
       className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
       onMouseDown={(e) => {
-        isDown = true;
+        const newLocal = isDown = true;
         startX = e.pageX - (ref.current?.offsetLeft || 0);
         scrollLeft = ref.current?.scrollLeft || 0;
       }}
@@ -99,7 +100,9 @@ export default function Home() {
   const [filtroAberto, setFiltroAberto] = React.useState(false);
   const [filtrosSelecionados, setFiltrosSelecionados] = React.useState<string[]>([]);
   const [telaAtiva, setTelaAtiva] = React.useState("feed");
+  const { lojas, produtosAvaliados, produtosBaratos, produtosRecentes, loading } = useFeedData();
 
+  if (loading) return <div className="bg-[#F6F3E4] min-h-screen flex items-center justify-center">Carregando...</div>;
   if (telaAtiva === "outra") {
     return <TelaDeslogada aoFazerLogin={() => setTelaAtiva("feed")} />;
   }
