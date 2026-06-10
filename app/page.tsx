@@ -3,7 +3,6 @@ import React, { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useFeedData } from "@/hooks/useFeedData";
 
-// COMPONENTE AUXILIAR DE SCROLL (COMPARTILHADO POR AMBAS AS TELAS)
 function ScrollContainer({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   let isDown = false;
@@ -34,7 +33,6 @@ function ScrollContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ARRAYS DE DADOS COMPLETOS (Para não perder nenhum dado entre as telas)
 const PRODUTOS_AVALIADOS = [
   { nome: "Brownie Meio A.", preco: "R$4,70", unidade: "", disponivel: true, img: "/brownie1.png", logo: "/cjr.png" },
   { nome: "Brownie Trad.", preco: "R$3,80", unidade: "", disponivel: false, img: "/brownie2.png", logo: "/cjr.png" },
@@ -92,9 +90,6 @@ const FILTROS_OPCOES = [
   { label: "Casa", icon: "🏠" },
 ];
 
-// ==========================================
-// 1. TELA PRINCIPAL (LOGADA)
-// ==========================================
 export default function Home() {
   const router = useRouter();
   const [filtroAberto, setFiltroAberto] = React.useState(false);
@@ -302,9 +297,8 @@ export default function Home() {
   );
 }
 
-// ==========================================
-// 2. SUA TELA DESLOGADA COM OS MESMOS PRODUTOS
-// ==========================================
+//tela deslogada
+
 function TelaDeslogada({ aoFazerLogin }: { aoFazerLogin: () => void }) {
   const router = useRouter();
   const [filtroAberto, setFiltroAberto] = React.useState(false);
