@@ -155,7 +155,7 @@ export default function LojaPage() {
         {/* ver mais → vai pra tela de avaliações */}
         <div style={{ width: "100%", maxWidth: 1050, display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
           <span
-            onClick={() => router.push("/loja/rare-beauty/avaliacoes")}
+            onClick={() => router.push("/loja-deslogado/rare-beauty/avaliacoes-deslogado")}
             style={{ color: "#6A38F3", fontSize: 20, cursor: "pointer", fontWeight: 400 }}
           >
             ver mais
@@ -208,7 +208,7 @@ export default function LojaPage() {
                 </div>
                 <p style={{ fontSize: 23, color: "#333", margin: 0, lineHeight: 1, fontWeight: 300, alignItems: "center"}}>{av.texto}</p>
                 <span
-                  onClick={() => router.push("/loja/rare-beauty/avaliacoes")}
+                  onClick={() => router.push("/loja-deslogado/rare-beauty/avaliacoes-deslogado")}
                   style={{ color: "#6A38F3", fontSize: 16, fontWeight: 300, cursor: "pointer", marginTop: -4, display: "block", textAlign: "right" }}
                 >
                   ver mais
