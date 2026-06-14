@@ -19,12 +19,12 @@ export default function Home() {
     }
 
     try {
-      const {data} = await api.post('/users/login', {
+      const {data} = await api.post('/login', {
         email,
         senha,
       });
 
-      localStorage.setItem('usuario', JSON.stringify(data));
+      localStorage.setItem('token', data.acess_token); //salva só o token
       router.push('/'); //colocar aqui para onde o usuario é redirecionado após login
     } catch(error) {
       if(axios.isAxiosError(error)){
@@ -33,9 +33,6 @@ export default function Home() {
         setErro("Erro inesperado");
       }
   }
-
-
-
   }
 
   return (
