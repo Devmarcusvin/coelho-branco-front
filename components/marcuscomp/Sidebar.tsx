@@ -3,9 +3,10 @@
 import Link from "next/link"
 import { FlaskConical, Home, ImageIcon, LogOut, UserRound } from "lucide-react"
 import { usePathname } from "next/navigation"
-
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/hooks/useAuth"
 
 const navItems = [
   {
@@ -22,6 +23,13 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const { isLogado, logout } = useAuth()
+
+  function handleLogout(){
+    logout();
+    router.push('/login');
+  }
 
   return (
     <aside className="flex min-h-dvh w-72 shrink-0 flex-col bg-black px-6 py-5 text-[#fffdf2] sticky top-0 h-screen">
@@ -60,24 +68,43 @@ export default function Sidebar() {
       </nav>
 
       <div className="flex items-center justify-between border-t border-white/15 pt-5">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-lg"
-          className="text-[#6d35ff] hover:bg-white/10 hover:text-[#6d35ff]"
-          aria-label="Perfil"
-        >
-          <UserRound className="size-7 fill-current stroke-[2.5]" aria-hidden="true" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-lg"
-          className="text-[#ff1717] hover:bg-white/10 hover:text-[#ff1717]"
-          aria-label="Sair"
-        >
-          <LogOut className="size-7 stroke-[2.5]" aria-hidden="true" />
-        </Button>
+        {isLogado ? (
+          <>
+            <Button
+              asChild
+              variant="ghost"
+              size="icon-lg"
+              className={cn(
+                "text-[#6d35ff] hover:bg-white/10",
+                pathname === '/perfil' && "bg-white/10"  // ativo na página de perfil
+              )}
+              aria-label="Perfil"
+            >
+              <Link href="/perfil">
+                <UserRound className="size-7 fill-current stroke-[2.5]" />
+              </Link>
+            </Button>
+
+            <Button
+              onClick={handleLogout}
+              variant="ghost"
+              size="icon-lg"
+              className="text-[#ff1717] hover:bg-white/10"
+              aria-label="Sair"
+            >
+              <LogOut className="size-7 stroke-[2.5]" />
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button asChild variant="ghost" className="text-[#fffdf2] hover:text-[#B3D101] font-[family-name:var(--font-league-spartan)] text-[17px] font-[600] text-[#FFFFFF]">
+              <Link href="/login">LOGIN</Link>
+            </Button>
+            <Button asChild className="w-[140px] h-[30px] bg-[#6d35ff] hover:bg-[#5028C4] font-[family-name:var(--font-league-spartan)] text-[17px] font-[600] text-[#FFFFFF] rounded-[50px]">
+              <Link href="/cadastro">CADASTRE-SE</Link>
+            </Button>
+          </>
+        )}
       </div>
     </aside>
   )

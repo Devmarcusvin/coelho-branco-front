@@ -10,7 +10,7 @@ export default function CarrosselAvaliacoes() {
   const scrollEsquerda = () => avaliacoesRef.current?.scrollBy({ left: -960, behavior: "smooth" })
   const scrollDireita = () => avaliacoesRef.current?.scrollBy({ left: 960, behavior: "smooth" })
 
-  const [status, setStatus] = useState<Status>("comentou")
+  const [status, setStatus] = useState<Status>("deslogado")
 
   return (
     <div className="relative flex flex-row gap-[10px]">

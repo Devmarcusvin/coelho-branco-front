@@ -13,7 +13,7 @@ type Status = "deslogado" | "logado" | "comentou"
 export default function Home() {
   // duas variaveis de teste, retire quando integrar com o back
   const [imagemSelecionada, setImagemSelecionada] = useState("/p1.png")
-  const [status, setStatus] = useState<Status>("comentou")
+  const [status, setStatus] = useState<Status>("deslogado")
 
   return (
     <div className="flex min-h-screen">
