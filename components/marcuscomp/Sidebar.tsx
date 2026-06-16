@@ -24,7 +24,7 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex min-h-dvh w-72 shrink-0 flex-col bg-black px-6 py-5 text-[#fffdf2]">
+    <aside className="flex min-h-dvh w-72 shrink-0 flex-col bg-black px-6 py-5 text-[#fffdf2] sticky top-0 h-screen">
       <Link href="/" className="mb-10 flex items-center gap-2" aria-label="Stock.io">
         <span className="text-4xl font-black leading-none tracking-normal text-[#fffdf2]">
           STOCK.IO
