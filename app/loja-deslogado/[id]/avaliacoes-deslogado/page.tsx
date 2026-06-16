@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/coelho-branco-front/components/marcuscomp/Sidebar";
 
 interface Avaliacao {
   id: number;
