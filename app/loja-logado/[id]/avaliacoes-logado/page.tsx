@@ -1,6 +1,8 @@
 "use client";
+"use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { RatingModal } from "@/components/RatingModal";
 
 interface Avaliacao {
   id: number;
@@ -77,6 +79,7 @@ function CardAvaliacao({ avaliacao }: { avaliacao: Avaliacao }) {
 
 export default function AvaliacoesLoja() {
   const router = useRouter();
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   return (
     <div style={{ minHeight: "100vh", background: "#000", fontFamily: "League Spartan, sans-serif" }}>
@@ -136,6 +139,7 @@ export default function AvaliacoesLoja() {
         <p style={{ color: "#fff", fontSize: 65, fontWeight: 400, margin: "0 0 8px", lineHeight: 1.1 }}>{NOTA_MEDIA.toFixed(2)}</p>
         <Estrelas valor={NOTA_MEDIA} tamanho={40} />
         <button
+          onClick={() => setShowRatingModal(true)}
           style={{ marginTop: 32, width: "100%", maxWidth: 740, padding: "18px 0", background: "#6A38F3", border: "none", borderRadius: 999, color: "#fff", fontSize: 30, fontWeight: 400, cursor: "pointer" }}
           onMouseOver={(e) => (e.currentTarget.style.background = "#5228d4")}
           onMouseOut={(e) => (e.currentTarget.style.background = "#6A38F3")}
@@ -148,6 +152,16 @@ export default function AvaliacoesLoja() {
       <div style={{ background: "#000", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "24px 24px 64px" }}>
         {AVALIACOES.map((av) => <CardAvaliacao key={av.id} avaliacao={av} />)}
       </div>
+
+      <RatingModal
+        storeName="Rare Beauty"
+        isOpen={showRatingModal}
+        onClose={() => setShowRatingModal(false)}
+        onSubmit={(rating, comment) => {
+          console.log(rating, comment);
+          // chamada à API aqui (POST /reviews)
+        }}
+      />
 
     </div>
   );
