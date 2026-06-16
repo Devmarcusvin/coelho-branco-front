@@ -8,6 +8,7 @@ interface RatingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (rating: number, comment: string) => void;
+  onDelete?: () => void;
   initialRating?: number;
   initialComment?: string;
   title?: string;
@@ -18,6 +19,7 @@ export function RatingModal({
   isOpen,
   onClose,
   onSubmit,
+  onDelete,
   initialRating = 0,
   initialComment = "",
   title = "Você está avaliando",
@@ -84,6 +86,15 @@ export function RatingModal({
           rows={5}
           className="w-full resize-none rounded-lg bg-white p-3 text-sm mb-5 outline-none focus:ring-2 focus:ring-purple-300"
         />
+
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 rounded-full transition mb-3"
+          >
+            DELETAR
+          </button>
+        )}
 
         <button
           onClick={handleSubmit}
