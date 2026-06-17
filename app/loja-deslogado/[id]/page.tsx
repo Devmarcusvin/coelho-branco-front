@@ -67,7 +67,8 @@ export default function LojaPage() {
  {/* NAVBAR */}
         <nav className="w-full bg-[#000000] flex items-center justify-between px-8 py-4">
           <img src="/LOGOStock.io.png" alt="Stock.io" style={{ width: 160, objectFit: "contain", marginLeft: 20 }} className="h-12 w-auto object-contain" />
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4"
+          >
             <button
               onClick={() => router.push("/login")}
               className="text-white font-[family-name:var(--font-league-spartan)] text-[16px] hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none"

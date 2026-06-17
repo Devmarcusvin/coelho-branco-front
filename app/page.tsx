@@ -64,7 +64,7 @@ const PRODUTOS_RECENTES = [
 
 const LISTA_LOJAS = [
   { nome: "CJR", categoria: "mercado", img: "/cjr.png" },
-  { nome: "Rare Beauty", categoria: "beleza", img: "/rarebeauty.png" },
+  { nome: "Rare Beauty", categoria: "beleza", img: "/rarebeauty.png", slug: "rare-beauty" },
   { nome: "The Croc Brew", categoria: "mercado", img: "/thecrocbrew.png" },
   { nome: "Mini Reno", categoria: "casa", img: "/minireno.png" },
   { nome: "amoca", categoria: "moda", img: "/amoca.png" },
@@ -280,15 +280,19 @@ export default function Home() {
             </div>
           </div>
           <ScrollContainer>
-            {LISTA_LOJAS.map((loja, i) => (
-              <div key={i} className="flex flex-col items-center cursor-pointer min-w-[140px]">
-                <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-3 bg-white flex items-center justify-center border border-[#eee]">
-                  <img src={loja.img} alt={loja.nome} className="w-full h-full object-cover"/>
-                </div>
-                <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[15px] text-center">{loja.nome}</p>
-                <p className="text-[#6A38F3] text-[13px] text-center">{loja.categoria}</p>
-              </div>
-            ))}
+        {LISTA_LOJAS.map((loja, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center cursor-pointer min-w-[140px]"
+            onClick={() => { if (loja.slug === "rare-beauty") router.push(`/loja-logado/${loja.slug}`); }}
+          >
+            <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-3 bg-white flex items-center justify-center border border-[#eee]">
+              <img src={loja.img} alt={loja.nome} className="w-full h-full object-cover"/>
+            </div>
+            <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[15px] text-center">{loja.nome}</p>
+            <p className="text-[#6A38F3] text-[13px] text-center">{loja.categoria}</p>
+          </div>
+        ))}
           </ScrollContainer>
         </div>
 
@@ -475,15 +479,19 @@ function TelaDeslogada({ aoFazerLogin }: { aoFazerLogin: () => void }) {
             </div>
           </div>
           <ScrollContainer>
-            {LISTA_LOJAS.map((loja, i) => (
-              <div key={i} className="flex flex-col items-center cursor-pointer min-w-[140px]">
-                <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-3 bg-white flex items-center justify-center border border-[#eee]">
-                  <img src={loja.img} alt={loja.nome} className="w-full h-full object-cover"/>
-                </div>
-                <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[15px] text-center">{loja.nome}</p>
-                <p className="text-[#6A38F3] text-[13px] text-center">{loja.categoria}</p>
-              </div>
-            ))}
+        {LISTA_LOJAS.map((loja, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center cursor-pointer min-w-[140px]"
+            onClick={() => { if (loja.slug === "rare-beauty") router.push(`/loja-deslogado/${loja.slug}`); }}
+          >
+            <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-3 bg-white flex items-center justify-center border border-[#eee]">
+              <img src={loja.img} alt={loja.nome} className="w-full h-full object-cover"/>
+            </div>
+            <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[#171918] text-[15px] text-center">{loja.nome}</p>
+            <p className="text-[#6A38F3] text-[13px] text-center">{loja.categoria}</p>
+          </div>
+        ))}
           </ScrollContainer>
         </div>
 

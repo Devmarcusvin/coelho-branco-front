@@ -48,7 +48,7 @@ const produtosPaginaA = [
 ];
 
 const produtosPaginaB = [
-  "/produto1.png",
+  "/produto1.png", 
   "/produto5.png",
   "/produto6.png",
 ];
@@ -78,7 +78,7 @@ export default function LojaPage() {
             </svg>
           </button>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/loja-deslogado/rare-beauty")}
             className="text-white hover:text-[#ff1717] transition-colors bg-transparent border-none cursor-pointer"
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
