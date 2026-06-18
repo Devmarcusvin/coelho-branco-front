@@ -39,7 +39,15 @@ const PRODUTOS_AVALIADOS = [
   { nome: "Nozes", preco: "R$29,99", unidade: "/kg", disponivel: true, img: "/nozes.png", logo: "/dcarts.png" },
   { nome: "Banana", preco: "R$3,99", unidade: "/kg", disponivel: true, img: "/banana.png", logo: "/maumar.png" },
   { nome: "Limão Siciliano", preco: "R$17,99", unidade: "/kg", disponivel: false, img: "/limao.png", logo: "/maumar.png" },
+  { nome: "Leite Integral", preco: "R$4,99", unidade: "", disponivel: true, img: "/leite.png", logo: "/dcarts.png" },
+  { nome: "Manteiga", preco: "R$23,99", unidade: "", disponivel: true, img: "/manteiga.png", logo: "/dcarts.png" },
+  { nome: "Leite Cond.", preco: "R$7,99", unidade: "", disponivel: true, img: "/leitecondensado.png", logo: "/dcarts.png" },
+  { nome: "Coca Cola", preco: "R$3,99", unidade: "", disponivel: true, img: "/cocacola.png", logo: "/dcarts.png" },
+  { nome: "Farinha de T.", preco: "R$6,99", unidade: "", disponivel: true, img: "/farinha.png", logo: "/dcarts.png" },
+  { nome: "Chocolate", preco: "R$8,99", unidade: "", disponivel: true, img: "/chocolate.png", logo: "/dcarts.png" },
+  { nome: "Redbull", preco: "R$5,41", unidade: "", disponivel: true, img: "/redbull.png", logo: "/cjr.png" },
 ];
+
 
 const PRODUTOS_BARATOS = [
   { nome: "Limpador Facial", preco: "R$74,99", unidade: "", disponivel: true, img: "/limpador.png", logo: "/creamy.png" },

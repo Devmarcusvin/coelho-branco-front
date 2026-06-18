@@ -16,10 +16,9 @@ export default function Home() {
   const [status, setStatus] = useState<Status>("comentou")
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-
-      <div className="flex-1 bg-[#F6F3E4] overflow-auto">
+   <div className="flex flex-col min-h-screen">
+  <Sidebar logado={false} onLogout={() => {}} onLogin={() => {}} />
+  <div className="flex-1 bg-[#F6F3E4] overflow-auto">
         <div className="flex flex-col gap-[60px] p-[60px] px-[100px] max-w-[1400px] mx-auto w-full overflow-hidden">
 
           {/* Grupo produto */}
