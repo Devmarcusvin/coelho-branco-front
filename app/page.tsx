@@ -70,7 +70,7 @@ function Estrelas({ quantidade }: { quantidade: number }) {
 
 export default function PerfilLoja() {
   const router = useRouter();
-  const [isLogado, setIsLogado] = useState(false);
+  const [logado, setLogado] = useState(true);
   const [usuario, setUsuario] = useState({
     nome: "",
     username: "",
@@ -82,7 +82,7 @@ export default function PerfilLoja() {
     const dados = localStorage.getItem("usuario");
     if (dados) {
       const user = JSON.parse(dados);
-      setIsLogado(true);
+      setLogado(true);
       setUsuario({
         nome: user.nome,
         username: user.username,
@@ -92,23 +92,21 @@ export default function PerfilLoja() {
     }
   }, []);
 
-  function handleSair() {
-    localStorage.removeItem("usuario");
-    setIsLogado(false);
-    router.push("/login");
-  }
-
   return (
     <div className="flex min-h-screen bg-[#F6F3E4]">
-
-      {/* SIDEBAR */}
-      <Sidebar />
-
-      {/* CONTEÚDO PRINCIPAL */}
       <div className="flex flex-col flex-1 overflow-x-hidden">
 
-        {/* BANNER / FOTO DE PERFIL */}
+        {/* ÁREA PRETA: NAVBAR + BANNER */}
         <div className="bg-[#000000] w-full">
+
+          {/* NAVBAR */}
+          <Sidebar
+            logado={logado}
+            onLogout={() => setLogado(false)}
+            onLogin={() => setLogado(true)}
+          />
+
+          {/* BANNER / FOTO DE PERFIL */}
           <div className="relative w-full" style={{ height: "357px" }}>
             <div className="absolute left-16 bottom-0 translate-y-1/2 z-10">
               <div className="w-[160px] h-[160px] rounded-full overflow-hidden border-4 border-[#F6F3E4] bg-white">
@@ -140,7 +138,7 @@ export default function PerfilLoja() {
                 </p>
               </div>
 
-              {isLogado && (
+              {logado && (
                 <button className="px-6 py-2 bg-[#6A38F3] text-white rounded-full font-[family-name:var(--font-league-spartan)] text-[16px] font-bold hover:bg-[#5228d4] transition-colors cursor-pointer">
                   Editar Perfil
                 </button>

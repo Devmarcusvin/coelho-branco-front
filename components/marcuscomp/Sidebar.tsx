@@ -1,84 +1,60 @@
-"use client"
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
 
-import Link from "next/link"
-import { FlaskConical, Home, ImageIcon, LogOut, UserRound } from "lucide-react"
-import { usePathname } from "next/navigation"
+interface NavbarProps {
+  logado: boolean;
+  onLogout: () => void;
+  onLogin: () => void;
+}
 
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-
-const navItems = [
-  {
-    href: "/",
-    label: "Inicio",
-    icon: Home,
-  },
-  {
-    href: "/teste",
-    label: "Teste",
-    icon: FlaskConical,
-  },
-]
-
-export default function Sidebar() {
-  const pathname = usePathname()
+export default function Navbar({ logado, onLogout, onLogin }: NavbarProps) {
+  const router = useRouter();
 
   return (
-    <aside className="flex min-h-dvh w-72 shrink-0 flex-col bg-black px-6 py-5 text-[#fffdf2] sticky top-0 h-screen">
-      <Link href="/" className="mb-10 flex items-center gap-2" aria-label="Stock.io">
-        <span className="text-4xl font-black leading-none tracking-normal text-[#fffdf2]">
-          STOCK.IO
-        </span>
-        <span className="flex size-8 items-center justify-center rounded-md bg-[#d8f21f] text-black">
-          <ImageIcon className="size-5 stroke-[3]" aria-hidden="true" />
-        </span>
-      </Link>
+    <nav className="w-full bg-[#000000] flex items-center justify-between px-8 py-4">
+      <img src="/LOGOStock.io.png" alt="Stock.io" className="h-12 w-auto object-contain" />
 
-      <nav className="flex flex-1 flex-col gap-3" aria-label="Rotas principais">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive =
-            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
-
-          return (
-            <Button
-              key={item.href}
-              asChild
-              variant="ghost"
-              className={cn(
-                "h-12 justify-start gap-3 rounded-md px-4 text-base font-bold text-[#fffdf2] hover:bg-[#6d35ff] hover:text-white",
-                isActive && "bg-[#6d35ff] text-white"
-              )}
-            >
-              <Link href={item.href} aria-current={isActive ? "page" : undefined}>
-                <Icon className="size-5" aria-hidden="true" />
-                {item.label}
-              </Link>
-            </Button>
-          )
-        })}
-      </nav>
-
-      <div className="flex items-center justify-between border-t border-white/15 pt-5">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-lg"
-          className="text-[#6d35ff] hover:bg-white/10 hover:text-[#6d35ff]"
-          aria-label="Perfil"
-        >
-          <UserRound className="size-7 fill-current stroke-[2.5]" aria-hidden="true" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-lg"
-          className="text-[#ff1717] hover:bg-white/10 hover:text-[#ff1717]"
-          aria-label="Sair"
-        >
-          <LogOut className="size-7 stroke-[2.5]" aria-hidden="true" />
-        </Button>
-      </div>
-    </aside>
-  )
+      {logado ? (
+        /* NAVBAR LOGADA */
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => console.log("ir para perfil")}
+            className="text-white hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
+          </button>
+          <button
+            onClick={onLogout}
+            className="text-white hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
+      ) : (
+        /* NAVBAR DESLOGADA */
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onLogin}
+            className="text-white font-[family-name:var(--font-league-spartan)] text-[16px] hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none"
+          >
+            LOGIN
+          </button>
+          <button
+            onClick={() => router.push("/cadastro")}
+            className="px-5 py-2 bg-[#6A38F3] text-white rounded-full font-[family-name:var(--font-league-spartan)] text-[16px] font-bold hover:bg-[#5228d4] transition-colors cursor-pointer"
+          >
+            CADASTRE-SE
+          </button>
+        </div>
+      )}
+    </nav>
+  );
 }
