@@ -152,6 +152,7 @@ function CardProduto({ produto }: { produto: typeof MAIS_POPULARES[0] }) {
 
 export default function CategoriaEletronicos() {
   const router = useRouter();
+  const [logado, setLogado] = React.useState(true);
   const [subcategoria, setSubcategoria] = React.useState<string | null>(null);
   const [ordenarAberto, setOrdenarAberto] = React.useState(false);
   const [ordenacaoSelecionada, setOrdenacaoSelecionada] = React.useState<string[]>([]);
@@ -165,15 +166,19 @@ export default function CategoriaEletronicos() {
 
   return (
     <div className="flex min-h-screen bg-[#F6F3E4]">
-
-      {/* SIDEBAR */}
-      <Sidebar />
-
-      {/* CONTEÚDO PRINCIPAL */}
       <div className="flex flex-col flex-1 overflow-x-hidden">
 
-        {/* BANNER */}
+        {/* ÁREA PRETA: NAVBAR + BANNER */}
         <div className="bg-[#000000] w-full">
+
+          {/* NAVBAR */}
+          <Sidebar
+            logado={logado}
+            onLogout={() => setLogado(false)}
+            onLogin={() => setLogado(true)}
+          />
+
+          {/* BANNER */}
           <section
             className="w-full relative"
             style={{
