@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import ModalAlterarSenha from "@/components/ModalAlterarSenha";
 
 interface ModalEditarPerfilProps {
   isOpen: boolean;
@@ -11,7 +12,6 @@ interface ModalEditarPerfilProps {
   };
   onSave?: (data: { nome: string; username: string; email: string }) => void;
   onDeleteAccount?: () => void;
-  onChangePassword?: () => void;
 }
 
 export default function ModalEditarPerfil({
@@ -20,12 +20,12 @@ export default function ModalEditarPerfil({
   initialData = {},
   onSave,
   onDeleteAccount,
-  onChangePassword,
 }: ModalEditarPerfilProps) {
   const [nome, setNome] = useState(initialData.nome ?? "");
   const [username, setUsername] = useState(initialData.username ?? "");
   const [email, setEmail] = useState(initialData.email ?? "");
   const [avatarUrl, setAvatarUrl] = useState(initialData.avatarUrl ?? "");
+  const [modalSenha, setModalSenha] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -52,75 +52,88 @@ export default function ModalEditarPerfil({
   };
 
   return (
-    <div style={styles.overlay}>
-      <div style={styles.modal}>
-        {/* Close button */}
-        <button style={styles.closeBtn} onClick={onClose} aria-label="Fechar">
-          ✕
-        </button>
+    <>
+      <div style={styles.overlay}>
+        <div style={styles.modal}>
+          {/* Close button */}
+          <button style={styles.closeBtn} onClick={onClose} aria-label="Fechar">
+            ✕
+          </button>
 
-        {/* Avatar */}
-        <div style={styles.avatarWrapper}>
-          <div style={styles.avatarCircle}>
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar" style={styles.avatarImg} />
-            ) : (
-              <div style={styles.avatarPlaceholder} />
-            )}
+          {/* Avatar */}
+          <div style={styles.avatarWrapper}>
+            <div style={styles.avatarCircle}>
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" style={styles.avatarImg} />
+              ) : (
+                <div style={styles.avatarPlaceholder} />
+              )}
+            </div>
+            <button
+              style={styles.cameraBtn}
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="Alterar foto"
+            >
+              📷
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleAvatarChange}
+            />
           </div>
-          <button
-            style={styles.cameraBtn}
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Alterar foto"
-          >
-            📷
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleAvatarChange}
-          />
-        </div>
 
-        {/* Fields */}
-        <div style={styles.fields}>
-          <input
-            style={styles.input}
-            placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-          />
-          <input
-            style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            style={styles.input}
-            placeholder="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+          {/* Fields */}
+          <div style={styles.fields}>
+            <input
+              style={styles.input}
+              placeholder="Nome"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
+            <input
+              style={styles.input}
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              style={styles.input}
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-        {/* Actions */}
-        <div style={styles.actions}>
-          <button style={styles.btnOutlineRed} onClick={onDeleteAccount}>
-            Deletar conta
-          </button>
-          <button style={styles.btnOutlinePurple} onClick={onChangePassword}>
-            Alterar senha
-          </button>
-          <button style={styles.btnSave} onClick={handleSave}>
-            Salvar
-          </button>
+          {/* Actions */}
+          <div style={styles.actions}>
+            <button style={styles.btnOutlineRed} onClick={onDeleteAccount}>
+              Deletar conta
+            </button>
+            <button style={styles.btnOutlinePurple} onClick={() => setModalSenha(true)}>
+              Alterar senha
+            </button>
+            <button style={styles.btnSave} onClick={handleSave}>
+              Salvar
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Modal Alterar Senha */}
+      <ModalAlterarSenha
+        isOpen={modalSenha}
+        onClose={onClose}
+        onBack={() => setModalSenha(false)}
+        onSave={() => {
+          setModalSenha(false);
+          onClose();
+        }}
+      />
+    </>
   );
 }
 
