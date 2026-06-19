@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/nav.bar/Sidebar";
+import Sidebar from "@/components/navbar/navbar";
 
 const PRODUTOS_ELETRONICOS = [
   // Página 1 - Linha 1

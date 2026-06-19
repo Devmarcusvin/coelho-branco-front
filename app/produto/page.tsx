@@ -1,17 +1,17 @@
 "use client"
-import Sidebar from "../../components/nav.bar/Sidebar"
+import Sidebar from "../../components/navbar/navbar"
 import CarrosselAvaliacoes from "../../components/avaliacoes/comentarioAvaliacoes"
 import CarrosselProdutos from "../../components/produtosCarrossel/produtosCar"
 import { useState } from "react"
 
-//são as imagens definidas do produto, quando integrar com o back retire
+
 const imagens = ["/p1.png", "/p2.png", "/p3.png", "/p4.png"]
 
-//Isso aqui é só pra trocar o que aparece na página dependendo de situações como: logado, deslogado e dono do comentário
+
 type Status = "deslogado" | "logado" | "comentou"
 
 export default function Home() {
-  // duas variaveis de teste, retire quando integrar com o back
+  
   const [imagemSelecionada, setImagemSelecionada] = useState("/p1.png")
   const [status, setStatus] = useState<Status>("comentou")
 

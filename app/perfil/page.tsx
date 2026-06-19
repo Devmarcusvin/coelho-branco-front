@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/navbar/navbar";
+import ModalAdicionarLoja from "@/components/AdicionarLoja";
 
 function ScrollContainer({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -77,6 +78,7 @@ export default function PerfilLoja() {
     email: "",
     foto: "/foto-perfil.png",
   });
+  const [modalAberto, setModalAberto] = useState(false);
 
   useEffect(() => {
     const dados = localStorage.getItem("usuario");
@@ -191,11 +193,14 @@ export default function PerfilLoja() {
               ))}
 
               <button
-              onClick={() => setModalAdicionarLoja(true)}
+              onClick={() => setModalAberto(true)}
               className="w-[40px] h-[40px] rounded-full bg-[#6A38F3] text-white text-[24px] flex items-center justify-center hover:bg-[#5228d4] transition-colors flex-shrink-0"
             >
               +
             </button>
+            {modalAberto && (
+           <ModalAdicionarLoja onClose={() => setModalAberto(false)} />
+            )}
             </div>
 
             {/* AVALIAÇÕES */}

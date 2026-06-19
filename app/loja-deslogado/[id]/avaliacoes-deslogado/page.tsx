@@ -83,7 +83,13 @@ export default function AvaliacoesLoja() {
 
      {/* NAVBAR */}
         <nav className="w-full bg-[#000000] flex items-center justify-between px-8 py-4">
-          <img src="/LOGOStock.io.png" alt="Stock.io" style={{ width: 160, objectFit: "contain", marginLeft: 20 }} className="h-12 w-auto object-contain" />
+        <img 
+            src="/LOGOStock.io.png" 
+            alt="Stock.io" 
+            style={{ width: 160, objectFit: "contain", marginLeft: 20 }} 
+            className="h-12 w-auto object-contain cursor-pointer" 
+            onClick={() => router.push("/")}
+        />
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push("/login")}
@@ -112,7 +118,12 @@ export default function AvaliacoesLoja() {
          </div>
         </div>
         <div style={{ position: "absolute", bottom: 20, right: 28, color: "#ddd", fontSize: 14, zIndex: 4 }}>
-          by <span style={{ textDecoration: "underline", cursor: "pointer" }}>Selena Gomez</span>
+            by <span 
+              style={{ textDecoration: "underline", cursor: "pointer" }} 
+              onClick={() => router.push("/perfil")}
+            >
+              Selena Gomez
+            </span>
         </div>
       </div>
 

@@ -17,7 +17,13 @@ export default function Navbar({ logado, onLogout, onLogin }: NavbarProps) {
 {logado ? (
   <nav className="w-full bg-[#000000] flex items-center justify-between px-8 py-4">
     {/* NAVBAR LOGADA */}
-    <img src="/LOGOStock.io.png" alt="Stock.io" style={{ width: 160, objectFit: "contain", marginLeft: 20 }} className="h-12 w-auto object-contain" />
+    <img 
+        src="/LOGOStock.io.png" 
+        alt="Stock.io" 
+        style={{ width: 160, objectFit: "contain", marginLeft: 20 }} 
+        className="h-12 w-auto object-contain cursor-pointer" 
+        onClick={() => router.push("/")}
+    />
     <div className="flex items-center gap-5">
       <button
         onClick={() => router.push("/perfil")}
@@ -43,7 +49,13 @@ export default function Navbar({ logado, onLogout, onLogin }: NavbarProps) {
 ) : (
   /* NAVBAR DESLOGADA */
   <nav className="w-full bg-[#000000] flex items-center justify-between px-8 py-4">
-    <img src="/LOGOStock.io.png" alt="Stock.io" style={{ width: 160, objectFit: "contain", marginLeft: 20 }} className="h-12 w-auto object-contain" />
+     <img 
+        src="/LOGOStock.io.png" 
+        alt="Stock.io" 
+        style={{ width: 160, objectFit: "contain", marginLeft: 20 }} 
+        className="h-12 w-auto object-contain cursor-pointer" 
+        onClick={() => router.push("/")}
+    />
     <div className="flex items-center gap-4">
       <button
         onClick={() => router.push("/login")}

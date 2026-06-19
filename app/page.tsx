@@ -51,9 +51,9 @@ const PRODUTOS_AVALIADOS = [
 
 const PRODUTOS_BARATOS = [
   { nome: "Limpador Facial", preco: "R$74,99", unidade: "", disponivel: true, img: "/limpador.png", logo: "/creamy.png" },
-  { nome: "Blush", preco: "R$199,99", unidade: "", disponivel: false, img: "/blush.png", logo: "/rarebeauty.png" },
+  { nome: "Blush", preco: "R$199,99", unidade: "", disponivel: false, img: "/blusg.png", logo: "/rarebeauty.png" },
   { nome: "Sérum Facial", preco: "R$99,90", unidade: "", disponivel: true, img: "/serum.png", logo: "/creamy.png" },
-  { nome: "Iluminador", preco: "R$249,90", unidade: "", disponivel: true, img: "/iluminador.png", logo: "/rarebeauty.png" },
+  { nome: "Iluminador", preco: "R$249,90", unidade: "", disponivel: true, img: "/iluminador2.png", logo: "/rarebeauty.png" },
   { nome: "Body Splash", preco: "R$179,99", unidade: "", disponivel: false, img: "/bodysplash.png", logo: "/roots.png" },
   { nome: "Óleo de cabelo", preco: "R$53,19", unidade: "", disponivel: true, img: "/oleocabelo.png", logo: "/roots.png" },
   { nome: "Protetor Solar", preco: "R$169,90", unidade: "", disponivel: true, img: "/protetorsolar.png", logo: "/roots.png" },
@@ -121,7 +121,7 @@ export default function Home() {
           <img src="/LOGOStock.io.png" alt="Stock.io" className="h-12 w-auto object-contain"/>  
           <div className="flex items-center gap-6">
             <button 
-              onClick={() => console.log("ir para perfil")}
+              onClick={() => router.push("/perfil")}
               className="text-white hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -173,7 +173,12 @@ export default function Home() {
         <div className="w-full max-w-[1218px]">
           <h2 className="text-[#171918] font-[family-name:var(--font-league-spartan)] text-[28px] font-bold mb-6">Categoria</h2>
           <div className="flex justify-start w-full">
-            <img src="/categorias.png" alt="Lista de Categorias" className="h-auto cursor-pointer"/>
+            <img 
+              src="/categorias.png" 
+              alt="Lista de Categorias" 
+              className="h-auto cursor-pointer"
+              onClick={() => router.push("/produtoespecifico")}
+            />
           </div>
         </div>
 
@@ -184,7 +189,11 @@ export default function Home() {
           </h2>
           <ScrollContainer>
             {PRODUTOS_AVALIADOS.map((produto, i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[220px]">
+              <div 
+                key={i} 
+                onClick={produto.nome === "Brownie Meio A." ? () => router.push("/produto") : undefined}
+                className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[220px]"
+              >
                 <div className="relative w-full aspect-square mb-4 flex items-center justify-center">
                   <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain"/>
                   {produto.logo && <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-10 h-10 rounded-full object-contain"/>}
@@ -382,8 +391,12 @@ function TelaDeslogada({ aoFazerLogin }: { aoFazerLogin: () => void }) {
             Produtos <span className="text-[16px] font-normal text-[#6A38F3] ml-2 italic underline">melhores avaliados</span>
           </h2>
           <ScrollContainer>
-            {PRODUTOS_AVALIADOS.map((produto, i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[220px]">
+                       {PRODUTOS_AVALIADOS.map((produto, i) => (
+              <div 
+                key={i} 
+                onClick={produto.nome === "Brownie Meio A." ? () => router.push("/produto") : undefined}
+                className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[220px]"
+              >
                 <div className="relative w-full aspect-square mb-4 flex items-center justify-center">
                   <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain"/>
                   {produto.logo && <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-10 h-10 rounded-full object-contain"/>}

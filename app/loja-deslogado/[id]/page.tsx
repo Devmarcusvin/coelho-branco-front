@@ -104,8 +104,13 @@ export default function LojaPage() {
         </div>
       </div>
         <div style={{ position: "absolute", bottom: 20, right: 28, color: "#ddd", fontSize: 14, zIndex: 4 }}>
-          by <span style={{ textDecoration: "underline", cursor: "pointer" }}>Selena Gomez</span>
-        </div>
+        by <span 
+          style={{ textDecoration: "underline", cursor: "pointer" }} 
+          onClick={() => router.push("/perfil")}
+        >
+          Selena Gomez
+        </span>
+          </div>
       </div>
 
       {/* PRODUTOS MELHOR AVALIADOS */}
