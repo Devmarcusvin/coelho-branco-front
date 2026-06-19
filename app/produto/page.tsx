@@ -1,5 +1,5 @@
 "use client"
-import Sidebar from "../../components/marcuscomp/Sidebar"
+import Sidebar from "../../components/nav.bar/Sidebar"
 import CarrosselAvaliacoes from "../../components/avaliacoes/comentarioAvaliacoes"
 import CarrosselProdutos from "../../components/produtosCarrossel/produtosCar"
 import { useState } from "react"

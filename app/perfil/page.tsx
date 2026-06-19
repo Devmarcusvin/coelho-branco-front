@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/marcuscomp/Sidebar";
+import Sidebar from "@/components/navbar/navbar";
 
 function ScrollContainer({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -38,8 +38,8 @@ const PRODUTOS_LOJA = [
   { nome: "Blush", preco: "R$199,99", disponivel: true, img: "/blush.png", logo: "/rarebeauty.png" },
   { nome: "Perfume Rare", preco: "R$599,90", disponivel: true, img: "/perfume.png", logo: "/rarebeauty.png" },
   { nome: "Iluminador", preco: "R$249,90", disponivel: true, img: "/iluminador.png", logo: "/rarebeauty.png" },
-  { nome: "Mini Blush", preco: "R$99,90", disponivel: false, img: "/miniblush.png", logo: "/rarebeauty.png" },
-  { nome: "Lápis Labial", preco: "R$139,90", disponivel: true, img: "/lapislabial.png", logo: "/rarebeauty.png" },
+  { nome: "Mini Blush", preco: "R$99,90", disponivel: false, img: "/mini-blush.png", logo: "/rarebeauty.png" },
+  { nome: "Lápis Labial", preco: "R$139,90", disponivel: true, img: "/lapis.png", logo: "/rarebeauty.png" },
   { nome: "Primer", preco: "R$259,90", disponivel: true, img: "/primer.png", logo: "/rarebeauty.png" },
 ];
 
@@ -50,7 +50,7 @@ const LOJAS = [
 const AVALIACOES = [
   {
     nome: "Selena Gomez",
-    foto: "/fotoperfil.png",
+    foto: "/foto-perfil.png",
     comentario: "Não é por nada não, mas essa garota arrasa",
     estrelas: 5,
   },
@@ -60,7 +60,7 @@ function Estrelas({ quantidade }: { quantidade: number }) {
   return (
     <div className="flex gap-1">
       {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width="24" height="24" viewBox="0 0 24 24" fill={i < quantidade ? "#CCFF00" : "#e0e0e0"} xmlns="http://www.w3.org/2000/svg">
+        <svg key={i} width="24" height="24" viewBox="0 0 24 24" fill={i < quantidade ? "#f5bc00" : "#e0e0e0"} xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
         </svg>
       ))}
@@ -75,7 +75,7 @@ export default function PerfilLoja() {
     nome: "",
     username: "",
     email: "",
-    foto: "/fotoperfil.png",
+    foto: "/foto-perfil.png",
   });
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function PerfilLoja() {
         nome: user.nome,
         username: user.username,
         email: user.email,
-        foto: user.foto_perfil_url || "/fotoperfil.png",
+        foto: user.foto_perfil_url || "/foto-perfil.png",
       });
     }
   }, []);
@@ -109,7 +109,7 @@ export default function PerfilLoja() {
           {/* BANNER / FOTO DE PERFIL */}
           <div className="relative w-full" style={{ height: "357px" }}>
             <div className="absolute left-16 bottom-0 translate-y-1/2 z-10">
-              <div className="w-[160px] h-[160px] rounded-full overflow-hidden border-4 border-[#F6F3E4] bg-white">
+              <div className="w-[180px] h-[180px] rounded-full overflow-hidden border-4 border-[#F6F3E4] bg-white">
                 <img src={usuario.foto} alt={usuario.nome} className="w-full h-full object-cover" />
               </div>
             </div>
@@ -126,10 +126,10 @@ export default function PerfilLoja() {
                 <h1 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[32px] mb-1">
                   {usuario.nome}
                 </h1>
-                <p className="text-[#555] text-[16px] flex items-center gap-2 mb-1">
-                  <span>@</span> {usuario.username}
+                <p className="text-[#555] text-[25px] flex items-center gap-2 mb-1">
+                  <span>@selenagomez</span> {usuario.username}
                 </p>
-                <p className="text-[#555] text-[16px] flex items-center gap-2">
+                <p className="text-[#555] text-[25px] flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"/>
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
@@ -149,27 +149,17 @@ export default function PerfilLoja() {
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mb-8">
               Produtos
             </h2>
-            <ScrollContainer>
-              {PRODUTOS_LOJA.map((produto, i) => (
-                <div key={i} className="bg-white rounded-2xl p-3 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[100px] max-w-[100px]">
-                  <div className="relative w-full h-[80px] mb-2 flex items-center justify-center">
-                    <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain" />
-                    {produto.logo && (
-                      <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-6 h-6 rounded-full object-contain" />
-                    )}
-                  </div>
-                  <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[13px] leading-tight mb-1">
-                    {produto.nome}
-                  </p>
-                  <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[13px]">
-                    {produto.preco}
-                  </p>
-                  <p className={`text-[11px] font-bold mt-1 ${produto.disponivel ? "text-[#4CAF50]" : "text-[#E53935]"}`}>
-                    {produto.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
-                  </p>
-                </div>
-              ))}
-            </ScrollContainer>
+          <ScrollContainer>
+            {PRODUTOS_LOJA.map((produto, i) => (
+              <div key={i} className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+                <img
+                  src={produto.img}
+                  alt={produto.nome}
+                  className="h-[300px] w-auto object-contain rounded-xl"
+                />
+              </div>
+            ))}
+          </ScrollContainer>
 
             {/* LOJAS */}
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mt-16 mb-6">
@@ -177,20 +167,35 @@ export default function PerfilLoja() {
             </h2>
             <div className="flex flex-col gap-4">
               {LOJAS.map((loja, i) => (
-                <div key={i} className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow max-w-[480px]">
+              <div key={i} className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow max-w-[480px]"
+                 onClick={() => {
+                    if (logado) {
+                    router.push("/loja-logado/rare-beauty");
+                     } else {
+                      router.push("/loja-deslogado/rare-beauty");
+                    }
+                  }}  
+                  >
                   <div>
-                    <p className="font-[family-name:var(--font-league-spartan)] text-[#171918] text-[20px]">
+                    <p className="font-[family-name:var(--font-league-spartan)] text-[#171918] text-[35px]">
                       {loja.nome}
                     </p>
-                    <p className="text-[#7B2FE0] text-[16px]">
+                    <p className="text-[#7B2FE0] text-[30px]">
                       {loja.categoria}
                     </p>
                   </div>
-                  <div className="w-[70px] h-[70px] rounded-full bg-[#F5E6DC] flex items-center justify-center overflow-hidden">
-                    <img src={loja.logo} alt={loja.nome} className="w-12 h-12 object-contain" />
+                  <div className="w-[100px] h-[100px] rounded-full bg-[#F5E6DC] flex items-center justify-center overflow-hidden">
+                    <img src={loja.logo} alt={loja.nome} className="w-25 h-25 object-contain" />
                   </div>
                 </div>
               ))}
+
+              <button
+              onClick={() => setModalAdicionarLoja(true)}
+              className="w-[40px] h-[40px] rounded-full bg-[#6A38F3] text-white text-[24px] flex items-center justify-center hover:bg-[#5228d4] transition-colors flex-shrink-0"
+            >
+              +
+            </button>
             </div>
 
             {/* AVALIAÇÕES */}
