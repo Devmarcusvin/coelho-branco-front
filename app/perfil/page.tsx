@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/navbar/navbar";
 import ModalAdicionarLoja from "@/components/AdicionarLoja";
+import ModalEditarPerfil from "@/components/ModalEditarPerfil";
 
 function ScrollContainer({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -79,6 +80,7 @@ export default function PerfilLoja() {
     foto: "/foto-perfil.png",
   });
   const [modalAberto, setModalAberto] = useState(false);
+  const [modalEditarPerfil, setModalEditarPerfil] = useState(false);
 
   useEffect(() => {
     const dados = localStorage.getItem("usuario");
@@ -141,27 +143,46 @@ export default function PerfilLoja() {
               </div>
 
               {logado && (
-                <button className="px-6 py-2 bg-[#6A38F3] text-white rounded-full font-[family-name:var(--font-league-spartan)] text-[16px] font-bold hover:bg-[#5228d4] transition-colors cursor-pointer">
+                <button
+                  className="px-6 py-2 bg-[#6A38F3] text-white rounded-full font-[family-name:var(--font-league-spartan)] text-[16px] font-bold hover:bg-[#5228d4] transition-colors cursor-pointer"
+                  onClick={() => setModalEditarPerfil(true)}
+                >
                   Editar Perfil
                 </button>
               )}
             </div>
 
+            {/* MODAL EDITAR PERFIL */}
+            <ModalEditarPerfil
+              isOpen={modalEditarPerfil}
+              onClose={() => setModalEditarPerfil(false)}
+              initialData={{
+                nome: usuario.nome,
+                username: usuario.username,
+                email: usuario.email,
+                avatarUrl: usuario.foto,
+              }}
+              onSave={(dados) => {
+                setUsuario((prev) => ({ ...prev, ...dados }));
+                setModalEditarPerfil(false);
+              }}
+            />
+
             {/* PRODUTOS */}
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mb-8">
               Produtos
             </h2>
-          <ScrollContainer>
-            {PRODUTOS_LOJA.map((produto, i) => (
-              <div key={i} className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
-                <img
-                  src={produto.img}
-                  alt={produto.nome}
-                  className="h-[300px] w-auto object-contain rounded-xl"
-                />
-              </div>
-            ))}
-          </ScrollContainer>
+            <ScrollContainer>
+              {PRODUTOS_LOJA.map((produto, i) => (
+                <div key={i} className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+                  <img
+                    src={produto.img}
+                    alt={produto.nome}
+                    className="h-[300px] w-auto object-contain rounded-xl"
+                  />
+                </div>
+              ))}
+            </ScrollContainer>
 
             {/* LOJAS */}
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mt-16 mb-6">
@@ -169,15 +190,17 @@ export default function PerfilLoja() {
             </h2>
             <div className="flex flex-col gap-4">
               {LOJAS.map((loja, i) => (
-              <div key={i} className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow max-w-[480px]"
-                 onClick={() => {
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow max-w-[480px]"
+                  onClick={() => {
                     if (logado) {
-                    router.push("/loja-logado/rare-beauty");
-                     } else {
+                      router.push("/loja-logado/rare-beauty");
+                    } else {
                       router.push("/loja-deslogado/rare-beauty");
                     }
-                  }}  
-                  >
+                  }}
+                >
                   <div>
                     <p className="font-[family-name:var(--font-league-spartan)] text-[#171918] text-[35px]">
                       {loja.nome}
@@ -193,14 +216,15 @@ export default function PerfilLoja() {
               ))}
 
               <button
-              onClick={() => setModalAberto(true)}
-              className="w-[40px] h-[40px] rounded-full bg-[#6A38F3] text-white text-[24px] flex items-center justify-center hover:bg-[#5228d4] transition-colors flex-shrink-0"
-            >
-              +
-            </button>
-            {modalAberto && (
-           <ModalAdicionarLoja onClose={() => setModalAberto(false)} />
-            )}
+                onClick={() => setModalAberto(true)}
+                className="w-[40px] h-[40px] rounded-full bg-[#6A38F3] text-white text-[24px] flex items-center justify-center hover:bg-[#5228d4] transition-colors flex-shrink-0"
+              >
+                +
+              </button>
+
+              {modalAberto && (
+                <ModalAdicionarLoja onClose={() => setModalAberto(false)} />
+              )}
             </div>
 
             {/* AVALIAÇÕES */}
