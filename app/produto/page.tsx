@@ -2,22 +2,29 @@
 import Sidebar from "../../components/navbar/navbar"
 import CarrosselAvaliacoes from "../../components/avaliacoes/comentarioAvaliacoes"
 import CarrosselProdutos from "../../components/produtosCarrossel/produtosCar"
-import { useState } from "react"
+import ModalEditarProduto from "../../components/ModalEditarProduto"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 
 
 const imagens = ["/p1.png", "/p2.png", "/p3.png", "/p4.png"]
 
-
-type Status = "deslogado" | "logado" | "comentou"
-
 export default function Home() {
   
   const [imagemSelecionada, setImagemSelecionada] = useState("/p1.png")
-  const [status, setStatus] = useState<Status>("comentou")
+  const [logado, setLogado] = useState(false)
+  const [modalEditarAberto, setModalEditarAberto] = useState(false)
+
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    if (searchParams.get("logado") === "true") {
+      setLogado(true)
+    }
+  }, [searchParams])
 
   return (
    <div className="flex flex-col min-h-screen">
-  <Sidebar logado={false} onLogout={() => {}} onLogin={() => {}} />
+  <Sidebar logado={logado} onLogout={() => setLogado(false)} onLogin={() => setLogado(true)} />
   <div className="flex-1 bg-[#F6F3E4] overflow-auto">
         <div className="flex flex-col gap-[60px] p-[60px] px-[100px] max-w-[1400px] mx-auto w-full overflow-hidden">
 
@@ -46,11 +53,13 @@ export default function Home() {
 
     {/* Ícones sempre colados à direita do container, independente do nome */}
     <div className="absolute right-0 flex flex-row gap-[2px]">
-      {status !== "deslogado" && (
-        <img src="verificado.png" className="w-[27px] h-[27px]" />
-      )}
-      {status !== "deslogado" && (
-        <img src="comentado.png" className="w-[27px] h-[27px]" />
+      <img src="verificado.png" className="w-[27px] h-[27px]" />
+      {logado && (
+        <img
+          src="comentado.png"
+          onClick={() => setModalEditarAberto(true)}
+          className="w-[27px] h-[27px] cursor-pointer"
+        />
       )}
     </div>
   </div>
@@ -82,6 +91,10 @@ export default function Home() {
 
         </div>
       </div>
+
+      {modalEditarAberto && (
+        <ModalEditarProduto onClose={() => setModalEditarAberto(false)} />
+      )}
     </div>
   )
 }
