@@ -19,7 +19,7 @@ export default function Navbar({ logado, onLogout, onLogin }: NavbarProps) {
         /* NAVBAR LOGADA */
         <div className="flex items-center gap-6">
           <button
-            onClick={() => console.log("ir para perfil")}
+            onClick={() => router.push("/perfil")}
             className="text-white hover:opacity-70 transition-opacity cursor-pointer bg-transparent border-none"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
