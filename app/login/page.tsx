@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 import axios from "axios";
-import api from "../services/api";
+import {api} from "../../lib/api";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -19,13 +19,13 @@ export default function Home() {
     }
 
     try {
-      const {data} = await api.post('/users/login', {
+      const {data} = await api.post('/login', {
         email,
         senha,
       });
 
-      localStorage.setItem('usuario', JSON.stringify(data));
-      router.push('/'); //colocar aqui para onde o usuario é redirecionado após login
+      localStorage.setItem('token', data.access_token);
+      router.push('/');
     } catch(error) {
       if(axios.isAxiosError(error)){
         setErro("Email ou senha incorretos.");
