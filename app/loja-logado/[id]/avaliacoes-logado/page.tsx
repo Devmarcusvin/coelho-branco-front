@@ -1,8 +1,8 @@
 "use client";
-"use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { RatingModal } from "@/components/RatingModal";
+import { api } from "@/lib/api";
 
 interface Avaliacao {
   id: number;
@@ -51,14 +51,19 @@ function Estrelas({ valor, tamanho = 22 }: { valor: number; tamanho?: number }) 
   );
 }
 
-function CardAvaliacao({ avaliacao }: { avaliacao: Avaliacao }) {
+function CardAvaliacao({ avaliacao, lojaId }: { avaliacao: Avaliacao; lojaId: string }) {
+  const router = useRouter();
   const [expandido, setExpandido] = useState(false);
   const limite = 120;
   const longo = avaliacao.texto.length > limite;
   const textoExibido = expandido || !longo ? avaliacao.texto : avaliacao.texto.slice(0, limite) + " [...]";
+  const isSofia = avaliacao.nome === "Sofia Figueiredo";
 
   return (
-    <div style={{ background: "#F5F2E8", borderRadius: "20px", padding: "24px 28px", display: "flex", gap: "20px", alignItems: "flex-start", width: "100%", maxWidth: "740px", boxSizing: "border-box" }}>
+    <div
+      onClick={() => isSofia && router.push(`/abrir-avaliacao?id=${avaliacao.id}&lojaId=${lojaId}`)}
+      style={{ background: "#F5F2E8", borderRadius: "20px", padding: "24px 28px", display: "flex", gap: "20px", alignItems: "flex-start", width: "100%", maxWidth: "740px", boxSizing: "border-box", cursor: isSofia ? "pointer" : "default" }}
+    >
       <img src={avaliacao.foto} alt={avaliacao.nome} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -67,7 +72,10 @@ function CardAvaliacao({ avaliacao }: { avaliacao: Avaliacao }) {
         </div>
         <p style={{ fontSize: 15, color: "#333", margin: 0, lineHeight: 1.55, textAlign: "justify" }}>{textoExibido}</p>
         <button
-          onClick={() => longo && setExpandido(!expandido)}
+          onClick={(e) => {
+            e.stopPropagation();
+            longo && setExpandido(!expandido);
+          }}
           style={{ background: "none", border: "none", color: "#6A38F3", fontSize: 14, fontWeight: 600, cursor: "pointer", padding: 0, marginTop: 8, display: "block", marginLeft: "auto" }}
         >
           {expandido ? "ver menos" : "ver mais"}
@@ -79,7 +87,54 @@ function CardAvaliacao({ avaliacao }: { avaliacao: Avaliacao }) {
 
 export default function AvaliacoesLoja() {
   const router = useRouter();
+  const params = useParams();
+  const slug = params.id as string; // ex: "rare-beauty", vindo da URL
+  const [lojaId, setLojaId] = useState<string | null>(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
+
+  const USUARIO_ID_MOCK = 2;
+
+  useEffect(() => {
+    async function buscarLojaIdPeloSlug() {
+      try {
+        const response = await api.get("/lojas");
+        const lojas: { id: number; nome: string }[] = response.data;
+        const lojaEncontrada = lojas.find(
+          (loja) =>
+            loja.nome.toLowerCase().replace(/\s+/g, "-") === slug.toLowerCase()
+        );
+        if (lojaEncontrada) {
+          setLojaId(String(lojaEncontrada.id));
+        } else {
+          console.error("Loja não encontrada para o slug:", slug);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar lojas:", err);
+      }
+    }
+
+    if (slug) buscarLojaIdPeloSlug();
+  }, [slug]);
+
+  async function handleAdicionarReview(rating: number, comment: string) {
+    if (!lojaId) {
+      alert("Loja ainda não carregada, tenta de novo em instantes.");
+      return;
+    }
+
+    try {
+      await api.post(`/lojas/${lojaId}/avaliacoes`, {
+        usuario_id: USUARIO_ID_MOCK,
+        nota: rating,
+        comentario: comment,
+      });
+      alert("Avaliação enviada com sucesso!");
+     
+    } catch (err) {
+      console.error("Erro ao enviar avaliação:", err);
+      alert("Não foi possível enviar a avaliação.");
+    }
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: "#000", fontFamily: "League Spartan, sans-serif" }}>
@@ -161,17 +216,14 @@ export default function AvaliacoesLoja() {
 
       {/* CARDS */}
       <div style={{ background: "#000", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "24px 24px 64px" }}>
-        {AVALIACOES.map((av) => <CardAvaliacao key={av.id} avaliacao={av} />)}
+        {AVALIACOES.map((av) => <CardAvaliacao key={av.id} avaliacao={av} lojaId={lojaId ?? ""} />)}
       </div>
 
       <RatingModal
         storeName="Rare Beauty"
         isOpen={showRatingModal}
         onClose={() => setShowRatingModal(false)}
-        onSubmit={(rating, comment) => {
-          console.log(rating, comment);
-          // chamada à API aqui (POST /reviews)
-        }}
+        onSubmit={handleAdicionarReview}
       />
 
     </div>

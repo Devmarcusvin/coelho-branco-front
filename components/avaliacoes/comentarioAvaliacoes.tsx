@@ -1,7 +1,7 @@
 "use client"
 import { useRef, useState } from "react"
 
-//'Status' criado apenas para testar como ficaria parte de editar comentários
+
 type Status = "deslogado" | "logado" | "comentou"
 
 export default function CarrosselAvaliacoes() {

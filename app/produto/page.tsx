@@ -1,100 +1,60 @@
 "use client"
-import Sidebar from "../../components/navbar/navbar"
-import CarrosselAvaliacoes from "../../components/avaliacoes/comentarioAvaliacoes"
-import CarrosselProdutos from "../../components/produtosCarrossel/produtosCar"
-import ModalEditarProduto from "../../components/ModalEditarProduto"
-import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
 
+import { useRef } from "react"
+import { useRouter } from "next/navigation"
 
-const imagens = ["/p1.png", "/p2.png", "/p3.png", "/p4.png"]
+//produtos pré definidos (tirar dps) - id e lojaId mockados, trocar pelos reais quando cadastrar no banco
+const produtos = [
+    { id: 1, lojaId: 1, img: "brownie azul.png", nome: "Brownie Trad.", preco: "R$3.80", disponivel: false },
+    { id: 2, lojaId: 1, img: "brownie doce leite.png", nome: "Brownie Doce L.", preco: "R$4,70", disponivel: true },
+    { id: 3, lojaId: 1, img: "brownie nozes.png", nome: "Brownie Nozes", preco: "R$4.70", disponivel: true },
+    { id: 4, lojaId: 1, img: "brownie cookie.png", nome: "Brownie Cookie", preco: "R$4.70", disponivel: false },
+    { id: 5, lojaId: 1, img: "brownie m&ms.png", nome: "Brownie M&M's", preco: "R$4.70", disponivel: true },
+    { id: 6, lojaId: 2, img: "Redbull Zero.png", nome: "Redbull Zero", preco: "R$5,41", disponivel: true },
+    { id: 7, lojaId: 2, img: "Redbull Melanc..png", nome: "Redbull Melanc.", preco: "R$5,41", disponivel: false },
+    { id: 8, lojaId: 2, img: "Redbull.png", nome: "Redbull", preco: "R$5,41", disponivel: true },
+]
 
-export default function Home() {
-  
-  const [imagemSelecionada, setImagemSelecionada] = useState("/p1.png")
-  const [logado, setLogado] = useState(false)
-  const [modalEditarAberto, setModalEditarAberto] = useState(false)
+export default function CarrosselProdutos() {
+    const ref = useRef<HTMLDivElement>(null)
+    const router = useRouter()
 
-  const searchParams = useSearchParams()
-  useEffect(() => {
-    if (searchParams.get("logado") === "true") {
-      setLogado(true)
+    const scrollEsquerda = () => ref.current?.scrollBy({ left: -280, behavior: "smooth" })
+    const scrollDireita = () => ref.current?.scrollBy({ left: 280, behavior: "smooth" })
+
+    const abrirProduto = (id: number, lojaId: number) => {
+        router.push(`/produto/${id}?lojaId=${lojaId}`)
     }
-  }, [searchParams])
 
-  return (
-   <div className="flex flex-col min-h-screen">
-  <Sidebar logado={logado} onLogout={() => setLogado(false)} onLogin={() => setLogado(true)} />
-  <div className="flex-1 bg-[#F6F3E4] overflow-auto">
-        <div className="flex flex-col gap-[60px] p-[60px] px-[100px] max-w-[1400px] mx-auto w-full overflow-hidden">
-
-          {/* Grupo produto */}
-          <div className="flex flex-row gap-[20px] h-[552px]">
-            <img src="/Vector 112.png" alt="botão de retornar" className="cursor-pointer self-start py-[20px]" />
-
-            <div className="flex flex-row gap-[10px] w-[704px] h-[552px]">
-              <div className="flex flex-col gap-[8px]">
-                {imagens.map((img) => (
-                  <img key={img} src={img} onClick={() => setImagemSelecionada(img)}
-                    className={`min-w-[132px] w-[132px] h-[132px] rounded-[20px] object-cover cursor-pointer flex-shrink-0 transition-all duration-200
-                ${imagemSelecionada === img ? "ring-2 ring-[#6A38F3]" : "opacity-70 hover:opacity-100"}`}/>
+    return (
+        <div className="relative">
+            {/* Botão esquerdo */}
+            <button onClick={(scrollEsquerda)} className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center hover:bg-[#6A38F3] transition-all duration-300 ease-in-out cursor-pointer" />
+            <div ref={ref} className="flex flex-row gap-[50px] overflow-x-auto scroll-smooth pb-2 px-12" style={{ scrollbarWidth: "none" }}>
+                {produtos.map((p, i) => (
+                    <div
+                        key={i}
+                        onClick={() => abrirProduto(p.id, p.lojaId)}
+                        className="flex flex-col bg-[#FFFFFF] min-w-[230px] w-[230px] h-[310px] rounded-[35px] items-center px-[25px] py-[20px] flex-shrink-0 cursor-pointer"
+                    >
+                        <div className="rounded-[20px] w-[190px] h-[190px] flex items-center justify-center cursor-pointer relative">
+                            <img src={p.img} className="object-contain w-[143px] h-[143px]" />
+                            <img src="logoCJR.png" className="absolute top-0 right-0 w-[68px] h-[68px] rounded-full object-cover" />
+                        </div>
+                        <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[26px] font-[500] self-start leading-tight hover:underline">
+                            {p.nome}</p>
+                        <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[23px] font-[500] self-start leading-tight">
+                            {p.preco}</p>
+                        <p className={`font-[family-name:var(--font-league-spartan)] text-[14px] font-[500] self-start leading-tight ${p.disponivel ? "text-[#C6E700]" : "text-[#AF052A]"}`}>
+                            {p.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
+                        </p>
+                    </div>
                 ))}
-              </div>
-              <div className="relative flex-1 bg-white rounded-[30px]">
-                <img src={imagemSelecionada} className="w-full h-full rounded-[30px] object-cover" />
-                <img src="/logoCJR.png" className="cursor-pointer absolute left-120 top-4 h-[72px] w-[72px] rounded-full object-cover" />
-              </div>
             </div>
 
-                {/*Infos do produto */}
-<div className="flex-1 h-full gap-[10px]">
-  <div className="relative flex flex-row items-center gap-[8px]">
-    <h1 className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[41px] font-[400]">Brownie Meio Amargo</h1>
-
-    {/* Ícones sempre colados à direita do container, independente do nome */}
-    <div className="absolute right-0 flex flex-row gap-[2px]">
-      <img src="verificado.png" className="w-[27px] h-[27px]" />
-      {logado && (
-        <img
-          src="comentado.png"
-          onClick={() => setModalEditarAberto(true)}
-          className="w-[27px] h-[27px] cursor-pointer"
-        />
-      )}
-    </div>
-  </div>
-
-              <div className="flex flex-row gap-[30px]">
-                <div className="flex">
-                  <img src="/Star 1.png" className="self-start w-[17px] h-[17px]" />
-                  <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[19px] text-center cursor-pointer font-[400]">4.5 | 15 reviews</p>
-                </div>
-                <p className="text-[#6A38F3] font-[family-name:var(--font-league-spartan)] text-[19px] text-center cursor-pointer font-[400]">mercado</p>
-                <p className="text-[#6A38F3] font-[family-name:var(--font-league-spartan)] text-[19px] text-center font-[400]">3 disponíveis</p>
-              </div>
-              <h1 className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[40px] font-[400]">R$4.70</h1>
-              <div className="flex p-1 bg-[#C7C7C7] rounded w-10"></div>
-              <p className="text-[#000000] py-[10px] font-[family-name:var(--font-league-spartan)] text-[13px] font-[300]">BROWNIE MEIO AMARGO 80g<br></br>Recheado com uma ganache de chocolate meio amargo bem cremosa, esse brownie conquistou o coração de muita gente!<br></br>
-                Ingredientes: <br></br> Achocolatado em pó, farinha de trigo enriquecida com ferro e ácido fólico, chocolate meio amargo, açúcar cristal, manteiga, água ,creme de leite, ovo em pó, glucose em pó, emulsificante: lecitina de soja, conservantes:
-                sorbato de potássio, propionato de cálcio e conservante para doces (sal refinado sem iodo, açúcar refinado, conservantes INS 202 e INS 211 e acidulante INS 330) e antioxidante: sal não iodado, amido de milho, antioxidantes INS 321 e INS 31
-                CONTÉM GLÚTEN.<br></br>CONTÉM LACTOSE.<br></br>ALÉRGICOS: CONTÉM OVO E DERIVADOS DE LEITE, TRIGO E SOJA.</p>
-            </div>
-          </div>
-
-          {/* Avaliações */}
-          <div className="flex flex-col relative gap-[20px]">
-            <CarrosselAvaliacoes />
-
-            <h1 className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[41px] font-[400]">Da mesma loja</h1>
-            <CarrosselProdutos />
-          </div>
-
+            {/* Botão direito */}
+            <button onClick={(scrollDireita)} className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full w-10 h-10 shadow-md flex items-center justify-center 
+      hover:bg-[#6A38F3] transition-all duration-300 ease-in-out cursor-pointer"/>
         </div>
-      </div>
-
-      {modalEditarAberto && (
-        <ModalEditarProduto onClose={() => setModalEditarAberto(false)} />
-      )}
-    </div>
-  )
+    )
 }

@@ -34,6 +34,69 @@ function Estrelas({ valor, tamanho = 22 }: { valor: number; tamanho?: number }) 
   );
 }
 
+
+type Produto = {
+  id: number;
+  nome: string;
+  preco: string;
+  unidade?: string;
+  disponivel: boolean;
+  img: string;
+  logo?: string;
+};
+
+function ProdutoCardAvaliados({ produto, onClick }: { produto: Produto; onClick: () => void }) {
+  return (
+    <div
+      onClick={onClick}
+      className="bg-white rounded-xl p-3 flex flex-col cursor-pointer hover:shadow-md transition-shadow"
+    >
+      <div className="relative w-full aspect-square mb-3 flex items-center justify-center">
+        <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain" />
+        {produto.logo && (
+          <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-6 h-6 rounded-full object-contain" />
+        )}
+      </div>
+      <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[13px] leading-tight mb-0.5 truncate">
+        {produto.nome}
+      </p>
+      <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[14px]">
+        {produto.preco}
+        {produto.unidade && <span className="text-[10px] font-normal text-[#888] ml-1">{produto.unidade}</span>}
+      </p>
+      <p className={`text-[10px] font-bold mt-0.5 ${produto.disponivel ? "text-[#4CAF50]" : "text-[#E53935]"}`}>
+        {produto.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
+      </p>
+    </div>
+  );
+}
+
+function ProdutoCardPaginacao({ produto, onClick }: { produto: Produto; onClick: () => void }) {
+  return (
+<div
+      onClick={onClick}
+      className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow"
+    >
+      <div className="relative w-full aspect-square mb-4 flex items-center justify-center">
+        <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain" />
+        {produto.logo && (
+          <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-10 h-10 rounded-full object-contain" />
+        )}
+      </div>
+      <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[16px] leading-tight mb-1 truncate">
+        {produto.nome}
+      </p>
+      <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[18px]">
+        {produto.preco}
+        {produto.unidade && <span className="text-[13px] font-normal text-[#888] ml-1">{produto.unidade}</span>}
+      </p>
+      <p className={`text-[13px] font-bold mt-1 ${produto.disponivel ? "text-[#4CAF50]" : "text-[#E53935]"}`}>
+        {produto.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
+      </p>
+    </div>
+  );
+}
+
 const AVALIACOES = [
   { id: 1, nome: "Sofia Figueiredo", foto: "/sofia-figueiredo1.png", estrelas: 5, perfil: "/perfil/sofia-figueiredo", texto: "Adorei o produto. Funcionou muito na minha pele. Estou muito contente e com toda certeza irei comprar mais produtos da marca. Que orgulhoooooooo! Arrasaram"},
   { id: 2, nome: "Selena Gomez", foto: "/selena-gomez.png", estrelas: 5, perfil: "/perfil/selena-gomez", texto: "Não é por nada não, mas essa garota arrasa" },
@@ -43,27 +106,69 @@ const AVALIACOES = [
   { id: 6, nome: "Sofia Figueiredo", foto: "/sofia-figueiredo4.jpg", estrelas: 4, perfil: null, texto: "Recebi recentemente meu pedido da Rare Beauty e não poderia estar mais encantada! Os produtos são absolutamente incríveis." },
 ];
 
-const produtosPaginaA = [
-  "/produto4.png",
-  "/produto2.png",
-  "/produto3.png",
+
+const produtosMelhorAvaliados: Produto[] = [
+  { id: 101, nome: "Bronzer", preco: "R$159,90", disponivel: true, img: "/bronzer.png", logo: "/rarebeauty.png" },
+  { id: 102, nome: "Blush", preco: "R$199,99", disponivel: true, img: "/blush.png", logo: "/rarebeauty.png" },
+  { id: 103, nome: "Perfume", preco: "R$349,90", disponivel: false, img: "/perfume.png", logo: "/rarebeauty.png" },
+  { id: 104, nome: "Iluminador", preco: "R$249,90", disponivel: true, img: "/iluminador.png", logo: "/rarebeauty.png" },
+  { id: 105, nome: "Mini Blush", preco: "R$89,90", disponivel: true, img: "/mini-blush.png", logo: "/rarebeauty.png" },
+  { id: 106, nome: "Lápis", preco: "R$59,90", disponivel: true, img: "/lapis.png", logo: "/rarebeauty.png" },
+  { id: 107, nome: "Primer", preco: "R$139,90", disponivel: false, img: "/primer.png", logo: "/rarebeauty.png" },
 ];
 
-const produtosPaginaB = [
-  "/produto1.png",
-  "/produto5.png",
+
+const IMAGENS_PLACEHOLDER = [
+  "/lapis_labial.png",
+  "/batom_rare.png",
+  "/contorno_rare.png",
+  "/iluminador_beauty.png",
+  "/primer_beauty.png",
+  "/rimel_beauty.png",
+  "/miniblush_beauty.png",
+  "/po_beauty.png",
+  "/perfume_beauty.png",
+  "/bruma_beauty.png",
+  "/produto6.png",
   "/produto6.png",
 ];
+
+const PRODUTOS_POR_PAGINA = 12;
+const TOTAL_PAGINAS = 5;
+
+function gerarProdutosPorPagina(): { [pagina: number]: Produto[] } {
+  const resultado: { [pagina: number]: Produto[] } = {};
+  let idAtual = 1;
+
+  for (let pagina = 1; pagina <= TOTAL_PAGINAS; pagina++) {
+    resultado[pagina] = Array.from({ length: PRODUTOS_POR_PAGINA }, () => {
+      const precoFake = (29.9 + ((idAtual * 17) % 220)).toFixed(2).replace(".", ",");
+      const produto: Produto = {
+        id: idAtual,
+        nome: `Produto ${idAtual}`,
+        preco: `R$${precoFake}`,
+        disponivel: idAtual % 5 !== 0, 
+        img: IMAGENS_PLACEHOLDER[(idAtual - 1) % IMAGENS_PLACEHOLDER.length],
+        logo: "/rarebeauty.png",
+      };
+      idAtual++;
+      return produto;
+    });
+  }
+
+  return resultado;
+}
+
+const produtosPorPagina = gerarProdutosPorPagina();
 
 export default function LojaPage() {
   const router = useRouter();
   const [pagina, setPagina] = useState(1);
-  const totalPaginas = 5;
+  const totalPaginas = TOTAL_PAGINAS;
   const [modalAberto, setModalAberto] = useState(false);
   const [modalProdutoAberto, setModalProdutoAberto] = useState(false);
 
-  const produtosDaPagina =
-  pagina % 2 === 0 ? produtosPaginaB : produtosPaginaA;
+  const produtosDaPagina = produtosPorPagina[pagina] ?? [];
 
   return (
     <div style={{ minHeight: "100vh", background: "#000", fontFamily: "League Spartan, sans-serif" }}>
@@ -170,13 +275,11 @@ export default function LojaPage() {
     };
   }}
   style={{ display: "flex", gap: 20, overflowX: "auto", paddingBottom: 8 }}>
-    <img src="/bronzer.png" alt="Bronzer" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
-    <img src="/blush.png" alt="Blush" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
-    <img src="/perfume.png" alt="Perfume" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
-    <img src="/iluminador.png" alt="Iluminador" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
-    <img src="/mini-blush.png" alt="Mini Blush" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
-    <img src="/lapis.png" alt="Lápis" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
-    <img src="/primer.png" alt="Primer" style={{ flexShrink: 0, borderRadius: 16, objectFit: "cover", height: 300 }} />
+{produtosMelhorAvaliados.map((produto) => (
+      <div key={produto.id} style={{ minWidth: 180, maxWidth: 180, flexShrink: 0 }}>
+        <ProdutoCardAvaliados produto={produto} onClick={() => router.push(`/produto/${produto.id}`)} />
+      </div>
+    ))}
   </div>
 </div>
 
@@ -259,25 +362,16 @@ export default function LojaPage() {
           Produtos <span style={{ fontWeight: 400, fontSize: 18 }}>de rare beauty</span>
         </h2>
       
-      <div
+<div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 24,
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr 1fr 1fr",
+        gap: 18,
         marginBottom: 32,
       }}
 >
-  {produtosDaPagina.map((img, index) => (
-    <img
-      key={index}
-      src={img}
-      alt={`Produto ${index + 1}`}
-      style={{
-        width: "100%",
-        borderRadius: 16,
-        display: "block",
-      }}
-    />
+{produtosDaPagina.map((produto) => (
+    <ProdutoCardPaginacao key={produto.id} produto={produto} onClick={() => router.push(`/produto/${produto.id}`)} />
   ))}
 </div>
 

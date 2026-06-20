@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 interface Avaliacao {
   id: number;
@@ -49,34 +49,47 @@ function Estrelas({ valor, tamanho = 22 }: { valor: number; tamanho?: number }) 
   );
 }
 
-function CardAvaliacao({ avaliacao }: { avaliacao: Avaliacao }) {
+function CardAvaliacao({ avaliacao, lojaId }: { avaliacao: Avaliacao; lojaId: string }) {
+  const router = useRouter();
   const [expandido, setExpandido] = useState(false);
   const limite = 120;
   const longo = avaliacao.texto.length > limite;
   const textoExibido = expandido || !longo ? avaliacao.texto : avaliacao.texto.slice(0, limite) + " [...]";
+  const isSofia = avaliacao.nome === "Sofia Figueiredo";
 
-  return (
-    <div style={{ background: "#F5F2E8", borderRadius: "20px", padding: "24px 28px", display: "flex", gap: "20px", alignItems: "flex-start", width: "100%", maxWidth: "740px", boxSizing: "border-box" }}>
-      <img src={avaliacao.foto} alt={avaliacao.nome} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-      <div style={{ flex: 1 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-          <span style={{ fontWeight: 700, fontSize: 18, color: "#111" }}>{avaliacao.nome}</span>
-          <Estrelas valor={avaliacao.estrelas} tamanho={20} />
+
+
+    return (
+      <div
+        onClick={() => isSofia && router.push(`/abrir-avaliacao?id=${avaliacao.id}`)}
+        style={{ background: "#F5F2E8", borderRadius: "20px", padding: "24px 28px", display: "flex", gap: "20px", alignItems: "flex-start", width: "100%", maxWidth: "740px", boxSizing: "border-box", cursor: isSofia ? "pointer" : "default" }}
+      >
+        <img src={avaliacao.foto} alt={avaliacao.nome} style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontWeight: 700, fontSize: 18, color: "#111" }}>{avaliacao.nome}</span>
+            <Estrelas valor={avaliacao.estrelas} tamanho={20} />
+          </div>
+          <p style={{ fontSize: 15, color: "#333", margin: 0, lineHeight: 1.55, textAlign: "justify" }}>{textoExibido}</p>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              longo && setExpandido(!expandido);
+            }}
+            style={{ background: "none", border: "none", color: "#6A38F3", fontSize: 14, fontWeight: 600, cursor: "pointer", padding: 0, marginTop: 8, display: "block", marginLeft: "auto" }}
+          >
+            {expandido ? "ver menos" : "ver mais"}
+          </button>
         </div>
-        <p style={{ fontSize: 15, color: "#333", margin: 0, lineHeight: 1.55, textAlign: "justify" }}>{textoExibido}</p>
-        <button
-          onClick={() => longo && setExpandido(!expandido)}
-          style={{ background: "none", border: "none", color: "#6A38F3", fontSize: 14, fontWeight: 600, cursor: "pointer", padding: 0, marginTop: 8, display: "block", marginLeft: "auto" }}
-        >
-          {expandido ? "ver menos" : "ver mais"}
-        </button>
       </div>
-    </div>
-  );
-}
+          );
+        }
 
 export default function AvaliacoesLoja() {
   const router = useRouter();
+  const params = useParams();
+  const lojaId = params.id as string;
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   return (
     <div style={{ minHeight: "100vh", background: "#000", fontFamily: "League Spartan, sans-serif" }}>
@@ -136,7 +149,7 @@ export default function AvaliacoesLoja() {
 
       {/* CARDS */}
       <div style={{ background: "#000", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, padding: "24px 24px 64px" }}>
-        {AVALIACOES.map((av) => <CardAvaliacao key={av.id} avaliacao={av} />)}
+       {AVALIACOES.map((av) => <CardAvaliacao key={av.id} avaliacao={av} lojaId={lojaId} />)}
       </div>
 
     </div>
