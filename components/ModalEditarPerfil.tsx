@@ -10,7 +10,7 @@ interface ModalEditarPerfilProps {
     email?: string;
     avatarUrl?: string;
   };
-  onSave?: (data: { nome: string; username: string; email: string }) => void;
+  onSave?: (data: { nome: string; username: string; email: string; avatarUrl: string }) => void;
   onDeleteAccount?: () => void;
 }
 
@@ -25,6 +25,8 @@ export default function ModalEditarPerfil({
   const [username, setUsername] = useState(initialData.username ?? "");
   const [email, setEmail] = useState(initialData.email ?? "");
   const [avatarUrl, setAvatarUrl] = useState(initialData.avatarUrl ?? "");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [salvando, setSalvando] = useState(false);
   const [modalSenha, setModalSenha] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,6 +36,7 @@ export default function ModalEditarPerfil({
       setUsername(initialData.username ?? "");
       setEmail(initialData.email ?? "");
       setAvatarUrl(initialData.avatarUrl ?? "");
+      setAvatarFile(null);
     }
   }, [isOpen]);
 
@@ -41,14 +44,63 @@ export default function ModalEditarPerfil({
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("[Avatar] Arquivo selecionado:", file);
     if (file) {
-      const url = URL.createObjectURL(file);
+      setAvatarFile(file);
+      const url = URL.createObjectURL(file); // só pra preview no modal
       setAvatarUrl(url);
     }
   };
 
-  const handleSave = () => {
-    onSave?.({ nome, username, email });
+  const handleSave = async () => {
+    console.log("[Save] 1. handleSave iniciado");
+    console.log("[Save] 2. avatarFile no momento do clique:", avatarFile);
+    setSalvando(true);
+    let fotoFinal = avatarUrl;
+
+    try {
+      if (avatarFile) {
+        console.log("[Save] 3. Tem avatarFile, vai tentar enviar pro backend");
+        const usuarioSalvo = localStorage.getItem("usuario");
+        const usuarioId = usuarioSalvo ? JSON.parse(usuarioSalvo).id : null;
+        console.log("[Save] 4. usuarioId encontrado:", usuarioId);
+
+        if (usuarioId) {
+          console.log("[Save] 5. Montando FormData e fazendo o fetch...");
+          const formData = new FormData();
+          formData.append("file", avatarFile);
+
+          const response = await fetch(`http://localhost:3333/users/${usuarioId}/avatar`, {
+            method: "POST",
+            body: formData,
+          });
+
+          console.log("[Save] 6. Status da resposta:", response.status, response.ok);
+
+          if (!response.ok) {
+            const textoErro = await response.text();
+            console.error("[Save] Resposta de erro do backend:", textoErro);
+            throw new Error("Falha ao enviar a imagem");
+          }
+
+          const data = await response.json();
+          console.log("[Save] 7. Dados recebidos do backend:", data);
+          fotoFinal = data.foto_perfil_url;
+        } else {
+          console.warn("[Save] 5b. usuarioId está vazio/nulo — upload NÃO foi enviado!");
+        }
+      } else {
+        console.warn("[Save] 3b. avatarFile está vazio — nenhuma foto nova foi selecionada, upload NÃO foi enviado!");
+      }
+
+      console.log("[Save] 8. Chamando onSave com fotoFinal:", fotoFinal);
+      onSave?.({ nome, username, email, avatarUrl: fotoFinal });
+    } catch (err) {
+      console.error("[Save] ERRO CAPTURADO:", err);
+      alert("Não foi possível salvar a foto. Tente novamente.");
+    } finally {
+      setSalvando(false);
+    }
   };
 
   return (
@@ -116,8 +168,8 @@ export default function ModalEditarPerfil({
             <button style={styles.btnOutlinePurple} onClick={() => setModalSenha(true)}>
               Alterar senha
             </button>
-            <button style={styles.btnSave} onClick={handleSave}>
-              Salvar
+            <button style={styles.btnSave} onClick={handleSave} disabled={salvando}>
+              {salvando ? "Salvando..." : "Salvar"}
             </button>
           </div>
         </div>

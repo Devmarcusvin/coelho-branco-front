@@ -77,7 +77,7 @@ export default function PerfilLoja() {
     nome: "",
     username: "",
     email: "",
-    foto: "/foto-perfil.png",
+    foto: "/fotoperfil1.png",
   });
   const [modalAberto, setModalAberto] = useState(false);
   const [modalEditarPerfil, setModalEditarPerfil] = useState(false);
@@ -91,7 +91,7 @@ export default function PerfilLoja() {
         nome: user.nome,
         username: user.username,
         email: user.email,
-        foto: user.foto_perfil_url || "/foto-perfil.png",
+        foto: user.foto_perfil_url || "/fotoperfil1.png",
       });
     }
   }, []);
@@ -106,7 +106,11 @@ export default function PerfilLoja() {
           {/* NAVBAR */}
           <Sidebar
             logado={logado}
-            onLogout={() => setLogado(false)}
+            onLogout={() => {
+              localStorage.removeItem("usuario");
+              setLogado(false);
+              router.push("/login");
+            }}
             onLogin={() => setLogado(true)}
           />
 
@@ -131,7 +135,7 @@ export default function PerfilLoja() {
                   {usuario.nome}
                 </h1>
                 <p className="text-[#555] text-[25px] flex items-center gap-2 mb-1">
-                  <span>@selenagomez</span> {usuario.username}
+                  <span>@</span> {usuario.username}
                 </p>
                 <p className="text-[#555] text-[25px] flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -163,7 +167,26 @@ export default function PerfilLoja() {
                 avatarUrl: usuario.foto,
               }}
               onSave={(dados) => {
-                setUsuario((prev) => ({ ...prev, ...dados }));
+                setUsuario((prev) => ({
+                  ...prev,
+                  nome: dados.nome,
+                  username: dados.username,
+                  email: dados.email,
+                  foto: dados.avatarUrl,
+                }));
+
+                const usuarioSalvo = localStorage.getItem("usuario");
+                if (usuarioSalvo) {
+                  const usuarioAtualizado = {
+                    ...JSON.parse(usuarioSalvo),
+                    nome: dados.nome,
+                    username: dados.username,
+                    email: dados.email,
+                    foto_perfil_url: dados.avatarUrl,
+                  };
+                  localStorage.setItem("usuario", JSON.stringify(usuarioAtualizado));
+                }
+
                 setModalEditarPerfil(false);
               }}
             />
