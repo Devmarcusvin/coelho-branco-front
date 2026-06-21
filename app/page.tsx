@@ -47,6 +47,7 @@ function normalizar(texto: string) {
     .trim();
 }
 
+
 function filtrarPorNome<T extends { nome: string }>(itens: T[], busca: string): T[] {
   const alvo = normalizar(busca);
   if (!alvo) return itens;
