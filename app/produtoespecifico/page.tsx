@@ -66,7 +66,6 @@ function CardProduto({ produto }: { produto: Produto }) {
   );
 }
 
-// ✅ Componente interno que usa useSearchParams (precisa estar dentro do Suspense)
 function ProdutoEspecificoConteudo() {
   const [todosProdutos, setTodosProdutos] = useState<Produto[]>([]);
   const [lojas, setLojas] = useState<Loja[]>([]);

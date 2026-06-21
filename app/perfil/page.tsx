@@ -6,6 +6,8 @@ import ModalAdicionarLoja from "@/components/AdicionarLoja";
 import ModalEditarPerfil from "@/components/ModalEditarPerfil";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
+import Navbar from "@/components/navbar/navbar";
+
 
 function ScrollContainer({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,28 +39,6 @@ function ScrollContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
-const AVALIACOES = [
-  {
-    id: 1, // troca pelo id real da Selena, se existir no banco
-    nome: "Selena Gomez",
-    foto: "/foto-perfil.png",
-    comentario: "Não é por nada não, mas essa garota arrasa",
-    estrelas: 5,
-  },
-];
-
-function Estrelas({ quantidade }: { quantidade: number }) {
-  return (
-    <div className="flex gap-1">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} width="24" height="24" viewBox="0 0 24 24" fill={i < quantidade ? "#f5bc00" : "#e0e0e0"} xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
 export default function PerfilLoja() {
   const router = useRouter();
   const { usuario: usuarioLogado, logout, recarregarUsuario } = useAuth();
@@ -66,6 +46,7 @@ export default function PerfilLoja() {
   const [modalEditarPerfil, setModalEditarPerfil] = useState(false);
   const [lojas, setLojas] = useState<any[]>([]);
   const [produtos, setProdutos] = useState<any[]>([]);
+  const [comentarios, setComentarios] = useState<any[]>([]);
 
   const usuario = {
     nome: usuarioLogado?.nome || "",
@@ -91,6 +72,41 @@ export default function PerfilLoja() {
         )
       );
       setProdutos(todosProdutos.flat());
+
+      // Comentários: percorre todas as lojas e produtos buscando avaliações
+      // e filtra só as do usuário logado. Sem rota nova no backend.
+      const avaliacoesLojaPorLoja = await Promise.all(
+        todasLojas.map((loja: any) =>
+          api.get(`/lojas/${loja.id}/avaliacoes`).then((r) =>
+            r.data.map((av: any) => ({ ...av, tipo: "loja", lojaId: loja.id }))
+          )
+        )
+      );
+
+      const { data: todosProdutosGeral } = await api.get("/produtos");
+      const avaliacoesProdutoPorProduto = await Promise.all(
+        todosProdutosGeral.map((produto: any) =>
+          api.get(`/produtos/${produto.id}/avaliacoes`).then((r) =>
+            r.data.map((av: any) => ({
+              ...av,
+              tipo: "produto",
+              produtoId: produto.id,
+              lojaId: produto.loja_id,
+            }))
+          )
+        )
+      );
+
+      const todosComentarios = [
+        ...avaliacoesLojaPorLoja.flat(),
+        ...avaliacoesProdutoPorProduto.flat(),
+      ].filter((c: any) => c.usuario_id === usuarioLogado.id);
+
+      todosComentarios.sort(
+        (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setComentarios(todosComentarios);
     } catch (e) {
       console.error("Erro ao buscar dados do perfil:", e);
     }
@@ -105,14 +121,7 @@ export default function PerfilLoja() {
       <div className="flex flex-col flex-1 overflow-x-hidden">
 
         <div className="bg-[#000000] w-full">
-          <Sidebar
-            logado={logado}
-            onLogout={() => {
-              logout();
-              router.push("/login");
-            }}
-            onLogin={() => router.push("/login")}
-          />
+          <Navbar/>
 
           <div className="relative w-full" style={{ height: "357px" }}>
             <div className="absolute left-16 bottom-0 translate-y-1/2 z-10">
@@ -172,24 +181,40 @@ export default function PerfilLoja() {
               Produtos
             </h2>
             {produtos.length === 0 ? (
-              <p className="text-[#555]">Nenhum produto encontrado.</p>
+              <p className="text-[#555] mb-16">Nenhum produto encontrado.</p>
             ) : (
-              <ScrollContainer>
-                {produtos.map((produto: any, i: number) => (
-                  <div key={i} className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
-                    <img
-                      src={produto.imagens?.[0]?.url_imagem || "/placeholder.png"}
-                      alt={produto.nome}
-                      className="h-[300px] w-auto object-contain rounded-xl"
-                    />
-                    <p className="text-[#171918] font-bold mt-2">{produto.nome}</p>
-                    <p className="text-[#555]">R${produto.preco}</p>
-                  </div>
-                ))}
-              </ScrollContainer>
+              <div className="flex flex-row gap-[50px] overflow-x-auto scroll-smooth mb-16" style={{ scrollbarWidth: "none" }}>
+                <ScrollContainer>
+                  {produtos.map((p: any) => {
+                    const disponivel = p.estoque > 0;
+                    const imagem = p.imagens?.[0]?.url_imagem;
+                    return (
+                      <div
+                        key={p.id}
+                        onClick={() => router.push(`/produto/${p.id}?lojaId=${p.loja_id}`)}
+                        className="flex flex-col bg-[#FFFFFF] min-w-[230px] w-[230px] h-[310px] rounded-[35px] items-center px-[25px] py-[20px] flex-shrink-0"
+                      >
+                        <div className="rounded-[20px] w-[190px] h-[190px] flex items-center justify-center cursor-pointer relative">
+                          <img src={imagem} className="object-contain w-[143px] h-[143px]" />
+                          <img src={p.loja?.logo_url} className="absolute top-0 right-0 w-[68px] h-[68px] rounded-full object-cover" />
+                        </div>
+                        <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[18px] font-[500] self-start leading-tight cursor-pointer hover:underline">
+                          {p.nome}
+                        </p>
+                        <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[23px] font-[500] self-start leading-tight">
+                          R${Number(p.preco).toFixed(2)}
+                        </p>
+                        <p className={`font-[family-name:var(--font-league-spartan)] text-[14px] font-[500] self-start leading-tight ${disponivel ? "text-[#C6E700]" : "text-[#AF052A]"}`}>
+                          {disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </ScrollContainer>
+              </div>
             )}
 
-            <div className="flex items-center justify-between mt-16 mb-6">
+            <div className="flex items-center justify-between mb-6">
               <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px]">
                 Lojas
               </h2>
@@ -205,8 +230,8 @@ export default function PerfilLoja() {
               {lojas.map((loja: any, i: number) => (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow flex-shrink-0 w-[400px]"
-                  onClick={() => router.push(`/loja-logado/${loja.id}`)}
+                  className="min-w-[930px] h-[205px] bg-white rounded-[20px] flex items-center justify-between px-10 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => router.push(`/lojas/${loja.id}`)}
                 >
                   <div>
                     <p className="font-[family-name:var(--font-league-spartan)] text-[#171918] text-[35px]">
@@ -216,7 +241,7 @@ export default function PerfilLoja() {
                       {loja.categoria}
                     </p>
                   </div>
-                  <div className="w-[100px] h-[100px] rounded-full bg-[#F5E6DC] flex items-center justify-center overflow-hidden">
+                  <div className="w-[120px] h-[120px] rounded-full bg-[#F5E6DC] flex items-center justify-center overflow-hidden">
                     <img src={loja.logo_url || loja.sticker_url || "/placeholder.png"} alt={loja.nome} className="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -234,35 +259,42 @@ export default function PerfilLoja() {
             )}
 
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mt-16 mb-6">
-              Avaliações
+              Comentários
             </h2>
-            <div className="flex flex-col gap-4">
-              {AVALIACOES.map((av, i) => (
-                <div key={i} className="bg-white rounded-2xl px-8 py-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-[80px] h-[80px] rounded-full overflow-hidden flex-shrink-0">
-                        <img src={av.foto} alt={av.nome} className="w-full h-full object-cover" />
+            {comentarios.length === 0 ? (
+              <p className="text-[#555]">Nenhum comentário ainda.</p>
+            ) : (
+              <ScrollContainer>
+                {comentarios.map((c: any, i: number) => (
+                  <div
+                    key={`${c.tipo}-${c.id}-${i}`}
+                    onClick={() =>
+                      c.tipo === "produto"
+                        ? router.push(`/produto/${c.produtoId}?lojaId=${c.lojaId}`)
+                        : router.push(`/lojas/${c.lojaId}`)
+                    }
+                    className="min-w-[930px] h-[205px] bg-[#FFFFFF] rounded-[20px] flex items-center cursor-pointer hover:shadow-md transition-shadow"
+                  >
+                    <img
+                      src={usuario.foto || "/avatar-padrao.png"}
+                      className="rounded-full h-[154px] w-[154px] ml-6 object-cover"
+                    />
+                    <div className="flex flex-col h-full py-[40px] flex-1 px-[20px]">
+                      <div className="flex flex-row justify-between items-center">
+                        <div className="flex flex-row">
+                          {Array.from({ length: c.nota }).map((_, j) => (
+                            <img key={j} src="/Star 1.png" className="w-[28px] h-[28px]" />
+                          ))}
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[20px]">
-                          {av.nome}
-                        </p>
-                        <p className="text-[#555] text-[16px] mt-1">
-                          {av.comentario}
-                        </p>
-                      </div>
+                      <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[25px] font-[200] mt-2">
+                        {c.comentario}
+                      </p>
                     </div>
-                    <Estrelas quantidade={av.estrelas} />
                   </div>
-                  <div className="flex justify-end mt-4">
-                    <button className="text-[#7B2FE0] text-[16px] hover:opacity-70 transition-opacity bg-transparent border-none cursor-pointer">
-                      ver mais
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </ScrollContainer>
+            )}
 
           </div>
         </main>

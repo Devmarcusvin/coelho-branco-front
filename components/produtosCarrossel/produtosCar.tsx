@@ -79,7 +79,7 @@ export default function CarrosselProdutos({ produtos, lojaId }: CarrosselProduto
                             <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[18px] font-[500] self-start leading-tight cursor-pointer hover:underline">
                                 {p.nome}</p>
                             <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[23px] font-[500] self-start leading-tight">
-                                {formatarPreco(p.preco)}</p>
+                                R${Number(p.preco).toFixed(2)}</p>
                             <p className={`font-[family-name:var(--font-league-spartan)] text-[14px] font-[500] self-start leading-tight ${disponivel ? "text-[#C6E700]" : "text-[#AF052A]"}`}>
                                 {disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
                             </p>
