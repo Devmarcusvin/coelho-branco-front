@@ -74,6 +74,7 @@ function ProdutoEspecificoConteudo() {
   const [ordenacaoSelecionada, setOrdenacaoSelecionada] = useState<string[]>([]);
   const [paginaAtual, setPaginaAtual] = useState(1);
   const [carregando, setCarregando] = useState(true);
+  const router = useRouter()
 
   const searchParams = useSearchParams();
   const categoriaUrl = searchParams.get("categoria");
@@ -275,6 +276,7 @@ function ProdutoEspecificoConteudo() {
                     <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden">
                       <img
                         src={loja.logo_url || "/placeholder.png"}
+                        onClick={() => router.push(`/lojas/${loja.id}`)}
                         alt={loja.nome}
                         className="w-14 h-14 object-contain"
                       />
