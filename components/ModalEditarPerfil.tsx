@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import ModalAlterarSenha from "@/components/ModalAlterarSenha";
+import ModalAlterarSenha from "./ModalAlterarSenha";
 
 interface ModalEditarPerfilProps {
   isOpen: boolean;

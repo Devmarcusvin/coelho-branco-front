@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
+export interface Categoria {
+  id: number;
+  label: string;
+  icon: string;
+}
+
 interface Produto {
   id: number;
   nome: string;
@@ -19,6 +25,7 @@ interface Loja {
 }
 
 export function useFeedData() {
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [lojas, setLojas] = useState<Loja[]>([]);
   const [produtosAvaliados, setProdutosAvaliados] = useState<Produto[]>([]);
   const [produtosBaratos, setProdutosBaratos] = useState<Produto[]>([]);
@@ -28,9 +35,17 @@ export function useFeedData() {
   useEffect(() => {
     async function fetchTudo() {
       try {
-        const { data: todasLojas } = await api.get("/lojas");
-        setLojas(todasLojas);
+        // Busca lojas e categorias ao mesmo tempo
+        const [resLojas, resCategorias] = await Promise.all([
+          api.get("/lojas"),
+          api.get("/categorias") 
+        ]);
 
+        const todasLojas = resLojas.data;
+        setLojas(todasLojas);
+        setCategorias(resCategorias.data);
+
+        // Busca os produtos de todas as lojas
         const resultados = await Promise.all(
           todasLojas.map((loja: Loja) =>
             api.get(`/lojas/${loja.id}/produtos`).then(r => r.data)
@@ -56,5 +71,5 @@ export function useFeedData() {
     fetchTudo();
   }, []);
 
-  return { lojas, produtosAvaliados, produtosBaratos, produtosRecentes, loading };
+  return { categorias, lojas, produtosAvaliados, produtosBaratos, produtosRecentes, loading };
 }

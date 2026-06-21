@@ -39,7 +39,7 @@ type Avaliacao = {
   usuario?: { nome: string; foto_perfil_url?: string };
 };
 
-// ==================== COMPONENTES AUXILIARES ====================
+
 
 function Estrelas({ valor, tamanho }: { valor: number; tamanho: number }) {
   const cheias = Math.floor(valor);

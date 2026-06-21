@@ -1,147 +1,52 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/navbar/navbar";
+import { api } from "@/lib/api";
 
-const PRODUTOS_ELETRONICOS = [
-  // Página 1 - Linha 1
-  { nome: "Comp. Lenovo", preco: "R$3.899,99", disponivel: false, img: "/lenovo.png", logo: "/repiit.png" },
-  { nome: "Comp. Samsung", preco: "R$8.549,99", disponivel: false, img: "/samsung.png", logo: "/repiit.png" },
-  { nome: "Iphone 15", preco: "R$4.769,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "Smart Tv Philips", preco: "R$1.229,00", disponivel: false, img: "/smarttvphilips.png", logo: "/repiit.png" },
-  { nome: "Xbox Series X", preco: "R$3.599,99", disponivel: false, img: "/xboxseriesx.png", logo: "/hobby.png" },
-  // Página 1 - Linha 2
-  { nome: "Macbook Air", preco: "R$15.899,99", disponivel: false, img: "/macbook.png", logo: "/repiit.png" },
-  { nome: "Iphone 16", preco: "R$4.598,99", disponivel: false, img: "/iphone16.png", logo: "/ibersay.png" },
-  { nome: "S25 Ultra", preco: "R$5.769,10", disponivel: false, img: "/s25ultra.png", logo: "/ibersay.png" },
-  { nome: "Ipad", preco: "R$7.859,00", disponivel: false, img: "/ipad.png", logo: "/repiit.png" },
-  { nome: "Headset Gamer", preco: "R$899,99", disponivel: false, img: "/headsetgamer.png", logo: "/hobby.png" },
-  // Página 1 - Linha 3
-  { nome: "Comp. Lenovo", preco: "R$649,99", disponivel: false, img: "/lenovo2.png", logo: "/ibersay.png" },
-  { nome: "Nintendo S. 2", preco: "R$4.799,99", disponivel: false, img: "/nintendo.png", logo: "/hobby.png" },
-  { nome: "Iphone 15", preco: "R$4.089,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "JBL", preco: "R$1.399,00", disponivel: true, img: "/jbl.png", logo: "/ibersay.png" },
-  { nome: "Xbox Series S", preco: "R$1.499,99", disponivel: true, img: "/xboxseriess.png", logo: "/hobby.png" },
-  // Página 2 - Linha 1
-  { nome: "Cabo USB", preco: "R$86,90", disponivel: true, img: "/cabousb.png", logo: "/repiit.png" },
-  { nome: "Micro SD", preco: "R$179,90", disponivel: true, img: "/microsd.png", logo: "/repiit.png" },
-  { nome: "Iphone 4", preco: "R$469,99", disponivel: true, img: "/iphone4.png", logo: "/ibersay.png" },
-  { nome: "Playstation 5", preco: "R$4.992,98", disponivel: false, img: "/ps5.png", logo: "/hobby.png" },
-  { nome: "Galaxy Z Fold", preco: "R$13.999,99", disponivel: true, img: "/galaxyzfold.png", logo: "/ibersay.png" },
-  // Página 2 - Linha 2
-  { nome: "Nintendo 3DS", preco: "R$2.089,99", disponivel: false, img: "/nintendo3ds.png", logo: "/repiit.png" },
-  { nome: "Galaxy A06", preco: "R$988,00", disponivel: true, img: "/galaxya06.png", logo: "/ibersay.png" },
-  { nome: "Monitor", preco: "R$988,00", disponivel: true, img: "/monitor.png", logo: "/repiit.png" },
-  { nome: "Teclado e mouse", preco: "R$395,00", disponivel: true, img: "/tecladomouse.png", logo: "/repiit.png" },
-  { nome: "Mouse", preco: "R$381,00", disponivel: true, img: "/mouse.png", logo: "/repiit.png" },
-  // Página 2 - Linha 3
-  { nome: "Smart TV Neo", preco: "R$2.999,00", disponivel: false, img: "/smarttvneo.png", logo: "/repiit.png" },
-  { nome: "Soundbar", preco: "R$1.044,28", disponivel: true, img: "/soundbar.png", logo: "/repiit.png" },
-  { nome: "Vitrola", preco: "R$509,99", disponivel: true, img: "/vitrola.png", logo: "/repiit.png" },
-  { nome: "Monitor", preco: "R$1.199,00", disponivel: true, img: "/monitor2.png", logo: "/repiit.png" },
-  { nome: "Smart TV", preco: "R$1.649,99", disponivel: true, img: "/smarttv.png", logo: "/repiit.png" },
-  // Página 3 - Linha 1
-  { nome: "Comp. Lenovo", preco: "R$3.899,99", disponivel: false, img: "/lenovo.png", logo: "/repiit.png" },
-  { nome: "Comp. Samsung", preco: "R$8.549,99", disponivel: false, img: "/samsung.png", logo: "/repiit.png" },
-  { nome: "Iphone 15", preco: "R$4.769,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "Smart Tv Philips", preco: "R$1.229,00", disponivel: false, img: "/smarttvphilips.png", logo: "/repiit.png" },
-  { nome: "Xbox Series X", preco: "R$3.599,99", disponivel: false, img: "/xboxseriesx.png", logo: "/hobby.png" },
-  // Página 3 - Linha 2
-  { nome: "Macbook Air", preco: "R$15.899,99", disponivel: false, img: "/macbook.png", logo: "/repiit.png" },
-  { nome: "Iphone 16", preco: "R$4.598,99", disponivel: false, img: "/iphone16.png", logo: "/ibersay.png" },
-  { nome: "S25 Ultra", preco: "R$5.769,10", disponivel: false, img: "/s25ultra.png", logo: "/ibersay.png" },
-  { nome: "Ipad", preco: "R$7.859,00", disponivel: false, img: "/ipad.png", logo: "/repiit.png" },
-  { nome: "Headset Gamer", preco: "R$899,99", disponivel: false, img: "/headsetgamer.png", logo: "/hobby.png" },
-  // Página 3 - Linha 3
-  { nome: "Comp. Lenovo", preco: "R$649,99", disponivel: false, img: "/lenovo2.png", logo: "/ibersay.png" },
-  { nome: "Nintendo S. 2", preco: "R$4.799,99", disponivel: false, img: "/nintendo.png", logo: "/hobby.png" },
-  { nome: "Iphone 15", preco: "R$4.089,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "JBL", preco: "R$1.399,00", disponivel: true, img: "/jbl.png", logo: "/ibersay.png" },
-  { nome: "Xbox Series S", preco: "R$1.499,99", disponivel: true, img: "/xboxseriess.png", logo: "/hobby.png" },
-  // Página 4 - Linha 1
-  { nome: "Cabo USB", preco: "R$86,90", disponivel: true, img: "/cabousb.png", logo: "/repiit.png" },
-  { nome: "Micro SD", preco: "R$179,90", disponivel: true, img: "/microsd.png", logo: "/repiit.png" },
-  { nome: "Iphone 4", preco: "R$469,99", disponivel: true, img: "/iphone4.png", logo: "/ibersay.png" },
-  { nome: "Playstation 5", preco: "R$4.992,98", disponivel: false, img: "/ps5.png", logo: "/hobby.png" },
-  { nome: "Galaxy Z Fold", preco: "R$13.999,99", disponivel: true, img: "/galaxyzfold.png", logo: "/ibersay.png" },
-  // Página 4 - Linha 2
-  { nome: "Nintendo 3DS", preco: "R$2.089,99", disponivel: false, img: "/nintendo3ds.png", logo: "/repiit.png" },
-  { nome: "Galaxy A06", preco: "R$988,00", disponivel: true, img: "/galaxya06.png", logo: "/ibersay.png" },
-  { nome: "Monitor", preco: "R$988,00", disponivel: true, img: "/monitor.png", logo: "/repiit.png" },
-  { nome: "Teclado e mouse", preco: "R$395,00", disponivel: true, img: "/tecladomouse.png", logo: "/repiit.png" },
-  { nome: "Mouse", preco: "R$381,00", disponivel: true, img: "/mouse.png", logo: "/repiit.png" },
-  // Página 4 - Linha 3
-  { nome: "Smart TV Neo", preco: "R$2.999,00", disponivel: false, img: "/smarttvneo.png", logo: "/repiit.png" },
-  { nome: "Soundbar", preco: "R$1.044,28", disponivel: true, img: "/soundbar.png", logo: "/repiit.png" },
-  { nome: "Vitrola", preco: "R$509,99", disponivel: true, img: "/vitrola.png", logo: "/repiit.png" },
-  { nome: "Monitor", preco: "R$1.199,00", disponivel: true, img: "/monitor2.png", logo: "/repiit.png" },
-  { nome: "Smart TV", preco: "R$1.649,99", disponivel: true, img: "/smarttv.png", logo: "/repiit.png" },
-  // Página 5 - Linha 1
-  { nome: "Comp. Lenovo", preco: "R$3.899,99", disponivel: false, img: "/lenovo.png", logo: "/repiit.png" },
-  { nome: "Comp. Samsung", preco: "R$8.549,99", disponivel: false, img: "/samsung.png", logo: "/repiit.png" },
-  { nome: "Iphone 15", preco: "R$4.769,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "Smart Tv Philips", preco: "R$1.229,00", disponivel: false, img: "/smarttvphilips.png", logo: "/repiit.png" },
-  { nome: "Xbox Series X", preco: "R$3.599,99", disponivel: false, img: "/xboxseriesx.png", logo: "/hobby.png" },
-  // Página 5 - Linha 2
-  { nome: "Macbook Air", preco: "R$15.899,99", disponivel: false, img: "/macbook.png", logo: "/repiit.png" },
-  { nome: "Iphone 16", preco: "R$4.598,99", disponivel: false, img: "/iphone16.png", logo: "/ibersay.png" },
-  { nome: "S25 Ultra", preco: "R$5.769,10", disponivel: false, img: "/s25ultra.png", logo: "/ibersay.png" },
-  { nome: "Ipad", preco: "R$7.859,00", disponivel: false, img: "/ipad.png", logo: "/repiit.png" },
-  { nome: "Headset Gamer", preco: "R$899,99", disponivel: false, img: "/headsetgamer.png", logo: "/hobby.png" },
-  // Página 5 - Linha 3
-  { nome: "Comp. Lenovo", preco: "R$649,99", disponivel: false, img: "/lenovo2.png", logo: "/ibersay.png" },
-  { nome: "Nintendo S. 2", preco: "R$4.799,99", disponivel: false, img: "/nintendo.png", logo: "/hobby.png" },
-  { nome: "Iphone 15", preco: "R$4.089,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "JBL", preco: "R$1.399,00", disponivel: true, img: "/jbl.png", logo: "/ibersay.png" },
-  { nome: "Xbox Series S", preco: "R$1.499,99", disponivel: true, img: "/xboxseriess.png", logo: "/hobby.png" },
-];
+interface Produto {
+  id?: string | number;
+  nome: string;
+  preco: string | number;
+  disponivel: boolean;
+  img: string;
+  logo?: string;
+  loja_id?: string | number;
+}
 
-const PRINCIPAIS_LOJAS = [
-  { nome: "abtec", img: "/abtec.png", categoria: "eletrônicos" },
-  { nome: "Repiit", img: "/repiit.png", categoria: "eletrônicos" },
-  { nome: "Bersay", img: "/ibersay.png", categoria: "eletrônicos" },
-  { nome: "electree", img: "/electree.png", categoria: "eletrônicos" },
-  { nome: "Speed X", img: "/speedx.png", categoria: "eletrônicos" },
-  { nome: "Next Computer", img: "/nextcomputer.png", categoria: "eletrônicos" },
-  { nome: "Oh my!", img: "/ohmy.png", categoria: "eletrônicos" },
-  { nome: "Lexut", img: "/lexut.png", categoria: "eletrônicos" },
-];
+interface Loja {
+  id?: string | number;
+  nome: string;
+  img: string;
+  categoria: string;
+}
 
-const MAIS_POPULARES = [
-  { nome: "Comp. Lenovo", preco: "R$3.899,99", disponivel: true, img: "/lenovo.png", logo: "/repiit.png" },
-  { nome: "Comp. Samsung", preco: "R$8.549,99", disponivel: false, img: "/samsung.png", logo: "/repiit.png" },
-  { nome: "Smart Tv Philips", preco: "R$1.229,00", disponivel: true, img: "/smarttvphilips.png", logo: "/repiit.png" },
-  { nome: "Xbox Series X", preco: "R$3.599,99", disponivel: false, img: "/xboxseriesx.png", logo: "/hobby.png" },
-  { nome: "Headset Gamer", preco: "R$899,99", disponivel: false, img: "/headsetgamer.png", logo: "/hobby.png" },
-];
-
-const RECEM_ADICIONADOS = [
-  { nome: "Micro SD", preco: "R$179,90", disponivel: true, img: "/microsd.png", logo: "/repiit.png" },
-  { nome: "Playstation 5", preco: "R$4.992,98", disponivel: false, img: "/ps5.png", logo: "/hobby.png" },
-  { nome: "Iphone 15", preco: "R$4.769,10", disponivel: true, img: "/iphone15.png", logo: "/ibersay.png" },
-  { nome: "Iphone 4", preco: "R$469,99", disponivel: true, img: "/iphone4.png", logo: "/ibersay.png" },
-  { nome: "Nintendo 3DS", preco: "R$2.089,99", disponivel: false, img: "/nintendo3ds.png", logo: "/repiit.png" },
-  { nome: "Galaxy Z Fold", preco: "R$13.999,99", disponivel: true, img: "/galaxyzfold.png", logo: "/ibersay.png" },
-];
-
-const SUBCATEGORIAS = ["Celulares", "Notebooks", "TVs", "Acessórios", "Outros"];
+const CATEGORIA_PAI = "eletronicos"; // usado nas chamadas de API
 const ORDENAR_OPCOES = ["Padrão", "Preço", "Avaliação", "Mais Recente"];
 const ITENS_POR_PAGINA = 15;
 
-function CardProduto({ produto }: { produto: typeof MAIS_POPULARES[0] }) {
+function CardProduto({ produto }: { produto: Produto }) {
+  const router = useRouter();
+  const precoFormatado = typeof produto.preco === "number" 
+    ? produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    : produto.preco;
+
   return (
-    <div className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[160px]">
+    <div 
+      onClick={() => produto.id && router.push(`/produto/${produto.id}?lojaId=${produto.loja_id || ""}`)}
+      className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[160px]"
+    >
       <div className="relative w-full aspect-square mb-4 flex items-center justify-center">
         <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain" />
         {produto.logo && (
           <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-10 h-10 rounded-full object-contain" />
         )}
       </div>
-      <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[16px] leading-tight mb-1">
+      <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[16px] leading-tight mb-1 line-clamp-2 min-h-[38px]">
         {produto.nome}
       </p>
       <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[18px]">
-        {produto.preco}
+        {precoFormatado}
       </p>
       <p className={`text-[13px] font-bold mt-1 ${produto.disponivel ? "text-[#4CAF50]" : "text-[#E53935]"}`}>
         {produto.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
@@ -152,17 +57,94 @@ function CardProduto({ produto }: { produto: typeof MAIS_POPULARES[0] }) {
 
 export default function CategoriaEletronicos() {
   const router = useRouter();
-  const [logado, setLogado] = React.useState(true);
-  const [subcategoria, setSubcategoria] = React.useState<string | null>(null);
-  const [ordenarAberto, setOrdenarAberto] = React.useState(false);
-  const [ordenacaoSelecionada, setOrdenacaoSelecionada] = React.useState<string[]>([]);
-  const [paginaAtual, setPaginaAtual] = React.useState(1);
+  const [logado, setLogado] = useState(true);
+  
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [principaisLojas, setPrincipaisLojas] = useState<Loja[]>([]);
+  const [maisPopulares, setMaisPopulares] = useState<Produto[]>([]);
+  const [recemAdicionados, setRecemAdicionados] = useState<Produto[]>([]);
+  
+  const [subcategorias, setSubcategorias] = useState<string[]>([]);
+  const [subcategoria, setSubcategoria] = useState<string | null>(null);
+  const [ordenarAberto, setOrdenarAberto] = useState(false);
+  const [ordenacaoSelecionada, setOrdenacaoSelecionada] = useState<string[]>([]);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [carregando, setCarregando] = useState(true);
 
-  const totalPaginas = Math.ceil(PRODUTOS_ELETRONICOS.length / ITENS_POR_PAGINA);
-  const produtosPagina = PRODUTOS_ELETRONICOS.slice(
-    (paginaAtual - 1) * ITENS_POR_PAGINA,
-    paginaAtual * ITENS_POR_PAGINA
-  );
+  // Busca dados estáticos das seções secundárias uma única vez
+  useEffect(() => {
+    async function buscarDadosIniciais() {
+      try {
+        const [lojasRes, popularesRes, recentesRes, subcategoriasRes] = await Promise.all([
+          api.get("/lojas?categoria=eletronicos"),
+          api.get("/produtos/populares"),
+          api.get("/produtos/recentes"),
+          api.get(`/produtos/${CATEGORIA_PAI}/subcategorias`)
+        ]);
+
+        setPrincipaisLojas(lojasRes.data);
+        setMaisPopulares(popularesRes.data);
+        setRecemAdicionados(recentesRes.data);
+        setSubcategorias(subcategoriasRes.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados secundários:", error);
+      }
+    }
+
+    buscarDadosIniciais();
+  }, []);
+
+  // Busca os produtos principais baseando-se na paginação, ordenação E subcategoria filtrada
+  useEffect(() => {
+    async function buscarProdutos() {
+      setCarregando(true);
+      try {
+        const params = new URLSearchParams({
+          page: paginaAtual.toString(),
+          limit: ITENS_POR_PAGINA.toString(),
+        });
+
+        // Tratamento da subcategoria para o padrão de API (URL amigável / lowercase)
+        if (subcategoria) {
+          const subcategoriaFormatada = subcategoria
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, ""); // Remove acentos e espaços se houver
+          
+          params.append("subcategoria", subcategoriaFormatada);
+        }
+
+        if (ordenacaoSelecionada.length > 0) {
+          params.append("ordenarPor", ordenacaoSelecionada.join(","));
+        }
+
+        const resposta = await api.get(`/produtos/${CATEGORIA_PAI}?${params.toString()}`);
+        
+        // Garante a compatibilidade caso a API retorne paginação pura ou array direto
+        if (resposta.data.items) {
+          setProdutos(resposta.data.items);
+          setTotalPaginas(resposta.data.totalPaginas || 1);
+        } else {
+          setProdutos(resposta.data);
+          setTotalPaginas(1);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        setProdutos([]);
+      } finally {
+        setCarregando(false);
+      }
+    }
+
+    buscarProdutos();
+  }, [paginaAtual, subcategoria, ordenacaoSelecionada]);
+
+  const lidarMudancaSubcategoria = (cat: string) => {
+    // Altera o estado da subcategoria e joga a paginação para a primeira página
+    setSubcategoria(subcategoria === cat ? null : cat);
+    setPaginaAtual(1);
+  };
 
   return (
     <div className="flex min-h-screen bg-[#F6F3E4]">
@@ -170,15 +152,12 @@ export default function CategoriaEletronicos() {
 
         {/* ÁREA PRETA: NAVBAR + BANNER */}
         <div className="bg-[#000000] w-full">
-
-          {/* NAVBAR */}
           <Sidebar
             logado={logado}
             onLogout={() => setLogado(false)}
             onLogin={() => setLogado(true)}
           />
 
-          {/* BANNER */}
           <section
             className="w-full relative"
             style={{
@@ -199,10 +178,10 @@ export default function CategoriaEletronicos() {
             {/* BARRA DE FILTROS + ORDENAR */}
             <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
               <div className="flex gap-3 flex-wrap">
-                {SUBCATEGORIAS.map((cat) => (
+                {subcategorias.map((cat) => (
                   <button
                     key={cat}
-                    onClick={() => setSubcategoria(subcategoria === cat ? null : cat)}
+                    onClick={() => lidarMudancaSubcategoria(cat)}
                     className={`px-5 py-2 rounded-full border font-[family-name:var(--font-league-spartan)] text-[15px] transition-all cursor-pointer ${
                       subcategoria === cat
                         ? "bg-[#6A38F3] text-white border-[#6A38F3]"
@@ -231,6 +210,7 @@ export default function CategoriaEletronicos() {
                           type="checkbox"
                           checked={ordenacaoSelecionada.includes(opcao)}
                           onChange={() => {
+                            setPaginaAtual(1);
                             setOrdenacaoSelecionada(prev =>
                               prev.includes(opcao) ? prev.filter(o => o !== opcao) : [...prev, opcao]
                             );
@@ -247,52 +227,64 @@ export default function CategoriaEletronicos() {
               </div>
             </div>
 
-            {/* GRID DE PRODUTOS */}
-            <div className="grid grid-cols-5 gap-6">
-              {produtosPagina.map((produto, i) => (
-                <CardProduto key={i} produto={produto} />
-              ))}
-            </div>
+            {/* GRID DE PRODUTOS / LOADING */}
+            {carregando ? (
+              <div className="w-full flex justify-center py-20 text-[#6A38F3] font-bold">
+                Carregando produtos...
+              </div>
+            ) : produtos.length === 0 ? (
+              <div className="w-full flex justify-center py-20 text-gray-500 font-bold">
+                Nenhum produto encontrado nesta subcategoria.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                {produtos.map((produto, i) => (
+                  <CardProduto key={produto.id || i} produto={produto} />
+                ))}
+              </div>
+            )}
 
-            {/* PAGINAÇÃO */}
-            <div className="flex items-center justify-center gap-4 mt-12 mb-16">
-              <button
-                onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
-                disabled={paginaAtual === 1}
-                className="text-[#171918] text-[22px] font-bold disabled:opacity-30 cursor-pointer bg-transparent border-none"
-              >
-                {"<"}
-              </button>
-              {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+            {/* PAGINAÇÃO DINÂMICA */}
+            {totalPaginas > 1 && (
+              <div className="flex items-center justify-center gap-4 mt-12 mb-16">
                 <button
-                  key={num}
-                  onClick={() => setPaginaAtual(num)}
-                  className={`text-[22px] font-bold cursor-pointer bg-transparent border-none transition-all ${
-                    paginaAtual === num ? "text-[#171918]" : "text-[#aaa] hover:text-[#171918]"
-                  }`}
+                  onClick={() => setPaginaAtual(p => Math.max(1, p - 1))}
+                  disabled={paginaAtual === 1}
+                  className="text-[#171918] text-[22px] font-bold disabled:opacity-30 cursor-pointer bg-transparent border-none"
                 >
-                  {num}
+                  {"<"}
                 </button>
-              ))}
-              <button
-                onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
-                disabled={paginaAtual === totalPaginas}
-                className="text-[#171918] text-[22px] font-bold disabled:opacity-30 cursor-pointer bg-transparent border-none"
-              >
-                {">"}
-              </button>
-            </div>
+                {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => setPaginaAtual(num)}
+                    className={`text-[22px] font-bold cursor-pointer bg-transparent border-none transition-all ${
+                      paginaAtual === num ? "text-[#171918]" : "text-[#aaa] hover:text-[#171918]"
+                    }`}
+                  >
+                    {num}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPaginaAtual(p => Math.min(totalPaginas, p + 1))}
+                  disabled={paginaAtual === totalPaginas}
+                  className="text-[#171918] text-[22px] font-bold disabled:opacity-30 cursor-pointer bg-transparent border-none"
+                >
+                  {">"}
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* PRINCIPAIS LOJAS */}
-          <div className="w-full bg-[#000000] py-10 px-10">
+          {/* SEÇÕES SECUNDÁRIAS (LOJAS, POPULARES, RECENTES) */}
+          <div className="w-full bg-[#000000] py-10 px-10 rounded-2xl my-8">
             <div className="w-full max-w-[1218px] mx-auto">
               <h2 className="text-white font-[family-name:var(--font-league-spartan)] text-[22px] font-bold mb-8">
                 Principais Lojas
               </h2>
               <div className="flex gap-8 overflow-x-auto pb-4 scrollbar-hide">
-                {PRINCIPAIS_LOJAS.map((loja, i) => (
-                  <div key={i} className="flex flex-col items-center gap-3 cursor-pointer min-w-[100px]">
+                {principaisLojas.map((loja, i) => (
+                  <div key={loja.id || i} className="flex flex-col items-center gap-3 cursor-pointer min-w-[100px]">
                     <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center overflow-hidden">
                       <img src={loja.img} alt={loja.nome} className="w-14 h-14 object-contain" />
                     </div>
@@ -300,7 +292,7 @@ export default function CategoriaEletronicos() {
                       {loja.nome}
                     </p>
                     <p className="text-[#6A38F3] font-[family-name:var(--font-league-spartan)] text-[12px] text-center">
-                      eletrônicos
+                      {loja.categoria}
                     </p>
                   </div>
                 ))}
@@ -308,32 +300,26 @@ export default function CategoriaEletronicos() {
             </div>
           </div>
 
-          {/* MAIS POPULARES */}
           <div className="w-full max-w-[1218px] mt-14">
             <h2 className="font-[family-name:var(--font-league-spartan)] text-[22px] font-bold text-[#171918] mb-6">
               Mais populares
             </h2>
             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-              {MAIS_POPULARES.map((produto, i) => (
-                <div key={i} className="min-w-[180px] max-w-[180px]">
+              {maisPopulares.map((produto, i) => (
+                <div key={produto.id || i} className="min-w-[180px] max-w-[180px]">
                   <CardProduto produto={produto} />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* RECÉM ADICIONADOS */}
           <div className="w-full max-w-[1218px] mt-14">
             <h2 className="font-[family-name:var(--font-league-spartan)] text-[22px] font-bold text-[#171918] mb-6">
               Recém adicionados
             </h2>
             <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide" style={{ scrollSnapType: "x mandatory" }}>
-              {RECEM_ADICIONADOS.map((produto, i) => (
-                <div
-                  key={i}
-                  className="min-w-[180px] max-w-[180px] flex-shrink-0"
-                  style={{ scrollSnapAlign: "start" }}
-                >
+              {recemAdicionados.map((produto, i) => (
+                <div key={produto.id || i} className="min-w-[180px] max-w-[180px] flex-shrink-0" style={{ scrollSnapAlign: "start" }}>
                   <CardProduto produto={produto} />
                 </div>
               ))}

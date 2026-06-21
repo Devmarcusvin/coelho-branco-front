@@ -7,6 +7,7 @@ import ModalAdicionarProduto from "@/components/ModalAdicionarProduto"
 import { useState, useEffect } from "react"
 import { useSearchParams, useParams } from "next/navigation"
 import { api } from "@/lib/api"
+import { useRouter } from "next/navigation"
 
 function getUserIdFromToken(): number | null {
   if (typeof window === "undefined") return null
@@ -21,6 +22,7 @@ function getUserIdFromToken(): number | null {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [logado, setLogado] = useState(false)
   const [modalEditarAberto, setModalEditarAberto] = useState(false)
 
@@ -96,7 +98,7 @@ export default function Home() {
 
           {/* Grupo produto */}
           <div className="flex flex-row gap-[20px] h-[552px]">
-            <img src="/Vector 112.png" alt="botão de retornar" className="cursor-pointer self-start py-[20px]" />
+            <img src="/Vector 112.png" alt="botão de retornar" className="cursor-pointer self-start py-[20px]" onClick={() => router.push('/')}/>
 
             <div className="flex flex-row gap-[10px] w-[704px] h-[552px]">
               <div className="flex flex-col gap-[8px]">
