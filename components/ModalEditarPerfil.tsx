@@ -44,59 +44,48 @@ export default function ModalEditarPerfil({
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    console.log("[Avatar] Arquivo selecionado:", file);
     if (file) {
       setAvatarFile(file);
-      const url = URL.createObjectURL(file); // só pra preview no modal
+      const url = URL.createObjectURL(file);
       setAvatarUrl(url);
     }
   };
 
   const handleSave = async () => {
-    console.log("[Save] 1. handleSave iniciado");
-    console.log("[Save] 2. avatarFile no momento do clique:", avatarFile);
     setSalvando(true);
     let fotoFinal = avatarUrl;
 
     try {
-      if (avatarFile) {
-        console.log("[Save] 3. Tem avatarFile, vai tentar enviar pro backend");
-        const usuarioSalvo = localStorage.getItem("usuario");
-        const usuarioId = usuarioSalvo ? JSON.parse(usuarioSalvo).id : null;
-        console.log("[Save] 4. usuarioId encontrado:", usuarioId);
+      const token = localStorage.getItem("token");
+      const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
+      const usuarioId = payload?.sub ?? null;
 
-        if (usuarioId) {
-          console.log("[Save] 5. Montando FormData e fazendo o fetch...");
-          const formData = new FormData();
-          formData.append("file", avatarFile);
+      if (avatarFile && usuarioId) {
+        // Converte a foto para base64
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(avatarFile);
+        });
 
-          const response = await fetch(`http://localhost:3333/users/${usuarioId}/avatar`, {
-            method: "POST",
-            body: formData,
-          });
+        const response = await fetch(`http://localhost:3333/users/${usuarioId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+          body: JSON.stringify({ foto_perfil_url: base64 }),
+        });
 
-          console.log("[Save] 6. Status da resposta:", response.status, response.ok);
+        if (!response.ok) throw new Error("Falha ao salvar foto");
 
-          if (!response.ok) {
-            const textoErro = await response.text();
-            console.error("[Save] Resposta de erro do backend:", textoErro);
-            throw new Error("Falha ao enviar a imagem");
-          }
-
-          const data = await response.json();
-          console.log("[Save] 7. Dados recebidos do backend:", data);
-          fotoFinal = data.foto_perfil_url;
-        } else {
-          console.warn("[Save] 5b. usuarioId está vazio/nulo — upload NÃO foi enviado!");
-        }
-      } else {
-        console.warn("[Save] 3b. avatarFile está vazio — nenhuma foto nova foi selecionada, upload NÃO foi enviado!");
+        const data = await response.json();
+        fotoFinal = data.foto_perfil_url;
       }
 
-      console.log("[Save] 8. Chamando onSave com fotoFinal:", fotoFinal);
       onSave?.({ nome, username, email, avatarUrl: fotoFinal });
     } catch (err) {
-      console.error("[Save] ERRO CAPTURADO:", err);
+      console.error("ERRO:", err);
       alert("Não foi possível salvar a foto. Tente novamente.");
     } finally {
       setSalvando(false);
@@ -107,12 +96,10 @@ export default function ModalEditarPerfil({
     <>
       <div style={styles.overlay}>
         <div style={styles.modal}>
-          {/* Close button */}
           <button style={styles.closeBtn} onClick={onClose} aria-label="Fechar">
             ✕
           </button>
 
-          {/* Avatar */}
           <div style={styles.avatarWrapper}>
             <div style={styles.avatarCircle}>
               {avatarUrl ? (
@@ -137,7 +124,6 @@ export default function ModalEditarPerfil({
             />
           </div>
 
-          {/* Fields */}
           <div style={styles.fields}>
             <input
               style={styles.input}
@@ -160,7 +146,6 @@ export default function ModalEditarPerfil({
             />
           </div>
 
-          {/* Actions */}
           <div style={styles.actions}>
             <button style={styles.btnOutlineRed} onClick={onDeleteAccount}>
               Deletar conta
@@ -175,7 +160,6 @@ export default function ModalEditarPerfil({
         </div>
       </div>
 
-      {/* Modal Alterar Senha */}
       <ModalAlterarSenha
         isOpen={modalSenha}
         onClose={onClose}

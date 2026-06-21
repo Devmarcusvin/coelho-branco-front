@@ -7,6 +7,7 @@ type Usuario = {
   id: number
   nome: string
   email: string
+  username?: string
   foto_perfil_url?: string
 }
 
@@ -15,6 +16,7 @@ type AuthContextType = {
   carregandoUsuario: boolean
   login: (email: string, senha: string) => Promise<void>
   logout: () => void
+  recarregarUsuario: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -32,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(null)
   const [carregandoUsuario, setCarregandoUsuario] = useState(true)
 
-  // Restaura o usuário ao recarregar a página, a partir do token salvo
   useEffect(() => {
     async function restaurar() {
       const token = localStorage.getItem("token")
@@ -72,13 +73,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function recarregarUsuario() {
+    const token = localStorage.getItem("token")
+    if (!token) return
+
+    const id = getIdFromToken(token)
+    if (!id) return
+
+    try {
+      const { data } = await api.get(`/users/${id}`)
+      setUsuario(data)
+    } catch (e) {
+      console.error("Erro ao recarregar usuário:", e)
+    }
+  }
+
   function logout() {
     setUsuario(null)
     localStorage.removeItem("token")
   }
 
   return (
-    <AuthContext.Provider value={{ usuario, carregandoUsuario, login, logout }}>
+    <AuthContext.Provider value={{ usuario, carregandoUsuario, login, logout, recarregarUsuario }}>
       {children}
     </AuthContext.Provider>
   )

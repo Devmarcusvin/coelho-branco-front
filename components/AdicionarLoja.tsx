@@ -3,15 +3,16 @@
 import { useState, useRef } from "react"
 import { X, FileUp, ChevronDown } from "lucide-react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333"
 
 const CATEGORIAS = ["Moda", "Eletrônicos", "Beleza", "Casa", "Esportes", "Alimentos"]
 
-// TODO: substituir por upload real para seu storage (Supabase, S3, etc.)
-// Essa função deve receber o File e retornar a URL pública da imagem
 async function uploadImagem(file: File): Promise<string> {
-  // Placeholder — retorna um object URL local só pra não quebrar o fluxo
-  return URL.createObjectURL(file)
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(file);
+  });
 }
 
 export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: () => void; usuarioId: number }) {
@@ -42,18 +43,21 @@ export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: ()
     try {
       setCarregando(true)
 
-      // Faz upload das imagens em paralelo (só as que foram selecionadas)
       const [logo_url, banner_url, sticker_url] = await Promise.all([
         logo ? uploadImagem(logo) : Promise.resolve(undefined),
         banner ? uploadImagem(banner) : Promise.resolve(undefined),
         fotoPerfil ? uploadImagem(fotoPerfil) : Promise.resolve(undefined),
       ])
 
+      const token = localStorage.getItem("token")
+
       const response = await fetch(`${API_URL}/lojas/create`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify({
-          usuario_id: usuarioId,
           nome: nome.trim(),
           descricao: descricao.trim() || undefined,
           logo_url,
@@ -85,7 +89,6 @@ export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: ()
 
         <h2 className="text-center font-black text-2xl mb-4">Adicionar loja</h2>
 
-        {/* Nome */}
         <input
           type="text"
           placeholder="Nome da loja"
@@ -94,7 +97,6 @@ export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: ()
           className="w-full bg-white rounded-xl px-4 py-3 mb-3 text-gray-700 outline-none border-none"
         />
 
-        {/* Descrição */}
         <textarea
           placeholder="Descrição (opcional)"
           value={descricao}
@@ -103,7 +105,6 @@ export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: ()
           className="w-full bg-white rounded-xl px-4 py-3 mb-3 text-gray-700 outline-none border-none resize-none"
         />
 
-        {/* Categoria */}
         <div className="bg-white rounded-xl mb-3 overflow-hidden">
           <button
             type="button"
@@ -131,7 +132,6 @@ export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: ()
           )}
         </div>
 
-        {/* Foto de perfil (sticker_url) */}
         <UploadArea
           label="Anexe a foto de perfil de sua loja"
           arquivo={fotoPerfil}
@@ -140,16 +140,14 @@ export default function ModalAdicionarLoja({ onClose, usuarioId }: { onClose: ()
           onChange={setFotoPerfil}
         />
 
-        {/* Logo (logo_url) */}
         <UploadArea
           label="Anexe a logo em SVG de sua loja"
           arquivo={logo}
           inputRef={logoRef}
-          accept=".svg,image/svg+xml"
+          accept=".svg,image/svg+xml,image/*"
           onChange={setLogo}
         />
 
-        {/* Banner (banner_url) */}
         <UploadArea
           label="Anexe o banner de sua loja"
           arquivo={banner}

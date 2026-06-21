@@ -1,9 +1,11 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/navbar/navbar";
 import ModalAdicionarLoja from "@/components/AdicionarLoja";
 import ModalEditarPerfil from "@/components/ModalEditarPerfil";
+import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
 
 function ScrollContainer({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -35,22 +37,9 @@ function ScrollContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
-const PRODUTOS_LOJA = [
-  { nome: "Bronzer", preco: "R$264,99", disponivel: true, img: "/bronzer.png", logo: "/rarebeauty.png" },
-  { nome: "Blush", preco: "R$199,99", disponivel: true, img: "/blush.png", logo: "/rarebeauty.png" },
-  { nome: "Perfume Rare", preco: "R$599,90", disponivel: true, img: "/perfume.png", logo: "/rarebeauty.png" },
-  { nome: "Iluminador", preco: "R$249,90", disponivel: true, img: "/iluminador.png", logo: "/rarebeauty.png" },
-  { nome: "Mini Blush", preco: "R$99,90", disponivel: false, img: "/mini-blush.png", logo: "/rarebeauty.png" },
-  { nome: "Lápis Labial", preco: "R$139,90", disponivel: true, img: "/lapis.png", logo: "/rarebeauty.png" },
-  { nome: "Primer", preco: "R$259,90", disponivel: true, img: "/primer.png", logo: "/rarebeauty.png" },
-];
-
-const LOJAS = [
-  { nome: "Rare Beauty", categoria: "beleza", logo: "/rarebeauty.png" },
-];
-
 const AVALIACOES = [
   {
+    id: 1, // troca pelo id real da Selena, se existir no banco
     nome: "Selena Gomez",
     foto: "/foto-perfil.png",
     comentario: "Não é por nada não, mas essa garota arrasa",
@@ -72,49 +61,59 @@ function Estrelas({ quantidade }: { quantidade: number }) {
 
 export default function PerfilLoja() {
   const router = useRouter();
-  const [logado, setLogado] = useState(true);
-  const [usuario, setUsuario] = useState({
-    nome: "",
-    username: "",
-    email: "",
-    foto: "/fotoperfil1.png",
-  });
+  const { usuario: usuarioLogado, logout, recarregarUsuario } = useAuth();
   const [modalAberto, setModalAberto] = useState(false);
   const [modalEditarPerfil, setModalEditarPerfil] = useState(false);
+  const [lojas, setLojas] = useState<any[]>([]);
+  const [produtos, setProdutos] = useState<any[]>([]);
+
+  const usuario = {
+    nome: usuarioLogado?.nome || "",
+    username: usuarioLogado?.username || "",
+    email: usuarioLogado?.email || "",
+    foto: usuarioLogado?.foto_perfil_url || "/fotoperfil1.png",
+  };
+
+  const logado = !!usuarioLogado;
+
+  const buscarDados = useCallback(async () => {
+    if (!usuarioLogado) return;
+    try {
+      const { data: todasLojas } = await api.get("/lojas");
+      const lojasDoUsuario = todasLojas.filter(
+        (loja: any) => loja.usuario_id === usuarioLogado.id
+      );
+      setLojas(lojasDoUsuario);
+
+      const todosProdutos = await Promise.all(
+        lojasDoUsuario.map((loja: any) =>
+          api.get(`/lojas/${loja.id}/produtos`).then((r) => r.data)
+        )
+      );
+      setProdutos(todosProdutos.flat());
+    } catch (e) {
+      console.error("Erro ao buscar dados do perfil:", e);
+    }
+  }, [usuarioLogado]);
 
   useEffect(() => {
-    const dados = localStorage.getItem("usuario");
-    if (dados) {
-      const user = JSON.parse(dados);
-      setLogado(true);
-      setUsuario({
-        nome: user.nome,
-        username: user.username,
-        email: user.email,
-        foto: user.foto_perfil_url || "/fotoperfil1.png",
-      });
-    }
-  }, []);
+    buscarDados();
+  }, [buscarDados]);
 
   return (
     <div className="flex min-h-screen bg-[#F6F3E4]">
       <div className="flex flex-col flex-1 overflow-x-hidden">
 
-        {/* ÁREA PRETA: NAVBAR + BANNER */}
         <div className="bg-[#000000] w-full">
-
-          {/* NAVBAR */}
           <Sidebar
             logado={logado}
             onLogout={() => {
-              localStorage.removeItem("usuario");
-              setLogado(false);
+              logout();
               router.push("/login");
             }}
-            onLogin={() => setLogado(true)}
+            onLogin={() => router.push("/login")}
           />
 
-          {/* BANNER / FOTO DE PERFIL */}
           <div className="relative w-full" style={{ height: "357px" }}>
             <div className="absolute left-16 bottom-0 translate-y-1/2 z-10">
               <div className="w-[180px] h-[180px] rounded-full overflow-hidden border-4 border-[#F6F3E4] bg-white">
@@ -124,11 +123,9 @@ export default function PerfilLoja() {
           </div>
         </div>
 
-        {/* ÁREA BEGE */}
         <main className="w-full flex flex-col px-16 pb-20" style={{ paddingTop: "100px" }}>
           <div className="w-full">
 
-            {/* INFORMAÇÕES DO USUÁRIO */}
             <div className="flex items-start justify-between mb-8">
               <div>
                 <h1 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[32px] mb-1">
@@ -156,7 +153,6 @@ export default function PerfilLoja() {
               )}
             </div>
 
-            {/* MODAL EDITAR PERFIL */}
             <ModalEditarPerfil
               isOpen={modalEditarPerfil}
               onClose={() => setModalEditarPerfil(false)}
@@ -166,63 +162,51 @@ export default function PerfilLoja() {
                 email: usuario.email,
                 avatarUrl: usuario.foto,
               }}
-              onSave={(dados) => {
-                setUsuario((prev) => ({
-                  ...prev,
-                  nome: dados.nome,
-                  username: dados.username,
-                  email: dados.email,
-                  foto: dados.avatarUrl,
-                }));
-
-                const usuarioSalvo = localStorage.getItem("usuario");
-                if (usuarioSalvo) {
-                  const usuarioAtualizado = {
-                    ...JSON.parse(usuarioSalvo),
-                    nome: dados.nome,
-                    username: dados.username,
-                    email: dados.email,
-                    foto_perfil_url: dados.avatarUrl,
-                  };
-                  localStorage.setItem("usuario", JSON.stringify(usuarioAtualizado));
-                }
-
+              onSave={async () => {
+                await recarregarUsuario();
                 setModalEditarPerfil(false);
               }}
             />
 
-            {/* PRODUTOS */}
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mb-8">
               Produtos
             </h2>
-            <ScrollContainer>
-              {PRODUTOS_LOJA.map((produto, i) => (
-                <div key={i} className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
-                  <img
-                    src={produto.img}
-                    alt={produto.nome}
-                    className="h-[300px] w-auto object-contain rounded-xl"
-                  />
-                </div>
-              ))}
-            </ScrollContainer>
+            {produtos.length === 0 ? (
+              <p className="text-[#555]">Nenhum produto encontrado.</p>
+            ) : (
+              <ScrollContainer>
+                {produtos.map((produto: any, i: number) => (
+                  <div key={i} className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+                    <img
+                      src={produto.imagens?.[0]?.url_imagem || "/placeholder.png"}
+                      alt={produto.nome}
+                      className="h-[300px] w-auto object-contain rounded-xl"
+                    />
+                    <p className="text-[#171918] font-bold mt-2">{produto.nome}</p>
+                    <p className="text-[#555]">R${produto.preco}</p>
+                  </div>
+                ))}
+              </ScrollContainer>
+            )}
 
-            {/* LOJAS */}
-            <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mt-16 mb-6">
-              Lojas
-            </h2>
-            <div className="flex flex-col gap-4">
-              {LOJAS.map((loja, i) => (
+            <div className="flex items-center justify-between mt-16 mb-6">
+              <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px]">
+                Lojas
+              </h2>
+              <button
+                onClick={() => setModalAberto(true)}
+                className="w-[40px] h-[40px] rounded-full bg-[#6A38F3] text-white text-[24px] flex items-center justify-center hover:bg-[#5228d4] transition-colors flex-shrink-0"
+              >
+                +
+              </button>
+            </div>
+
+            <ScrollContainer>
+              {lojas.map((loja: any, i: number) => (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow max-w-[480px]"
-                  onClick={() => {
-                    if (logado) {
-                      router.push("/loja-logado/rare-beauty");
-                    } else {
-                      router.push("/loja-deslogado/rare-beauty");
-                    }
-                  }}
+                  className="bg-white rounded-2xl px-6 py-5 flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow flex-shrink-0 w-[400px]"
+                  onClick={() => router.push(`/loja-logado/${loja.id}`)}
                 >
                   <div>
                     <p className="font-[family-name:var(--font-league-spartan)] text-[#171918] text-[35px]">
@@ -233,24 +217,22 @@ export default function PerfilLoja() {
                     </p>
                   </div>
                   <div className="w-[100px] h-[100px] rounded-full bg-[#F5E6DC] flex items-center justify-center overflow-hidden">
-                    <img src={loja.logo} alt={loja.nome} className="w-25 h-25 object-contain" />
+                    <img src={loja.logo_url || loja.sticker_url || "/placeholder.png"} alt={loja.nome} className="w-full h-full object-cover" />
                   </div>
                 </div>
               ))}
+            </ScrollContainer>
 
-              <button
-                onClick={() => setModalAberto(true)}
-                className="w-[40px] h-[40px] rounded-full bg-[#6A38F3] text-white text-[24px] flex items-center justify-center hover:bg-[#5228d4] transition-colors flex-shrink-0"
-              >
-                +
-              </button>
+            {modalAberto && (
+              <ModalAdicionarLoja
+                onClose={() => {
+                  setModalAberto(false);
+                  buscarDados();
+                }}
+                usuarioId={usuarioLogado!.id}
+              />
+            )}
 
-              {modalAberto && (
-                <ModalAdicionarLoja onClose={() => setModalAberto(false)} />
-              )}
-            </div>
-
-            {/* AVALIAÇÕES */}
             <h2 className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[28px] mt-16 mb-6">
               Avaliações
             </h2>

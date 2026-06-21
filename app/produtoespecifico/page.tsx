@@ -9,7 +9,7 @@ interface Produto {
   nome: string;
   preco: string | number;
   disponivel: boolean;
-  img: string;
+  imagens?: { url_imagem: string }[];
   logo?: string;
   loja_id?: string | number;
 }
@@ -37,7 +37,11 @@ function CardProduto({ produto }: { produto: Produto }) {
       className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[160px]"
     >
       <div className="relative w-full aspect-square mb-4 flex items-center justify-center">
-        <img src={produto.img} alt={produto.nome} className="w-full h-full object-contain" />
+        <img
+          src={produto.imagens?.[0]?.url_imagem || "/placeholder.png"}
+          alt={produto.nome}
+          className="w-full h-full object-contain"
+        />
         {produto.logo && (
           <img src={produto.logo} alt="marca" className="absolute top-1 right-1 w-10 h-10 rounded-full object-contain" />
         )}

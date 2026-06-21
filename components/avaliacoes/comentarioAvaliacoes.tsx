@@ -1,5 +1,6 @@
 "use client"
 import { useRef } from "react"
+import { useRouter } from "next/navigation"
  
 interface Usuario {
   nome: string
@@ -17,7 +18,7 @@ function ScrollContainer({ children }: { children: React.ReactNode }) {
       ref={ref}
       className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
       onMouseDown={(e) => {
-        const newLocal = isDown = true;
+        isDown = true;
         startX = e.pageX - (ref.current?.offsetLeft || 0);
         scrollLeft = ref.current?.scrollLeft || 0;
       }}
@@ -56,6 +57,7 @@ export default function CarrosselAvaliacoes({
   onEditarAvaliacao,
 }: CarrosselAvaliacoesProps) {
   const avaliacoesRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
   
   return (
     <div className="relative flex flex-row gap-[10px]">
@@ -67,11 +69,15 @@ export default function CarrosselAvaliacoes({
             <div key={avaliacao.id} className="min-w-[930px] h-[205px] bg-[#FFFFFF] rounded-[20px] flex items-center">
               <img
                 src={avaliacao.usuario?.foto_perfil_url || "/avatar-padrao.png"}
+                onClick={() => router.push(`/perfil/${avaliacao.usuario_id}`)}
                 className="cursor-pointer rounded-full h-[154px] w-[154px] ml-6"
               />
               <div className="flex flex-col h-full py-[40px] flex-1 px-[20px]">
                 <div className="flex flex-row justify-between items-center relative">
-                  <p className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[29px] font-[400]">
+                  <p
+                    onClick={() => router.push(`/perfil/${avaliacao.usuario_id}`)}
+                    className="cursor-pointer text-[#000000] font-[family-name:var(--font-league-spartan)] text-[29px] font-[400]"
+                  >
                     {avaliacao.usuario?.nome}
                   </p>
                   {/*Estrelas */}
