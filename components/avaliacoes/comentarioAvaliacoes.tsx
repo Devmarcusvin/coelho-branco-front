@@ -60,7 +60,7 @@ export default function CarrosselAvaliacoes({
   return (
     <div className="relative flex flex-row gap-[10px]">
       <div className="flex flex-col gap-[20px] w-full">
-        <h1 className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[41px] font-[400]">Avaliações</h1>
+        
         <div ref={avaliacoesRef} className="flex flex-row overflow-x-auto gap-[30px] [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         <ScrollContainer>
           {avaliacoes.map((avaliacao) => (
