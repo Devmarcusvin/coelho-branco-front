@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { League_Spartan, Nunito } from "next/font/google";
 import "./globals.css";
 
+import { AuthProvider } from "@/context/AuthContext";
+
 const leagueSpartan = League_Spartan({
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "600", "700", "800"],
@@ -27,9 +29,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={`${leagueSpartan.variable} ${nunito.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${leagueSpartan.variable} ${nunito.variable}`}
+    >
       <body className="min-h-screen">
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
