@@ -74,7 +74,7 @@ function ProdutoCard({ produto }: { produto: ProdutoFeed }) {
       onClick={() => router.push(`/produto/${produto.id}?lojaId=${produto.lojaId}`)}
       className="bg-white rounded-2xl p-4 flex flex-col cursor-pointer hover:shadow-md transition-shadow min-w-[220px]"
     >
-      <div className="relative w-full aspect-square mb-4 flex items-center justify-center">
+      <div className="relative w-[190px] h-[190px] mb-4 flex items-center justify-center shrink-0">
         {produto.img && (
           <img
             src={produto.img}
