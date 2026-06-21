@@ -255,7 +255,7 @@ export default function LojaPage() {
             by{" "}
             <span
               className="underline cursor-pointer"
-              onClick={() => router.push("/perfil")}
+              onClick={() => router.push(`/perfil/${loja.usuario_id}`)}
             >
               {loja.usuario.nome}
             </span>
