@@ -1,5 +1,5 @@
 "use client"
-import Sidebar from "../../../components/navbar/navbar"
+import Navbar from "../../../components/navbar/navbar"
 import CarrosselAvaliacoes from "../../../components/avaliacoes/comentarioAvaliacoes"
 import CarrosselProdutos from "../../../components/produtosCarrossel/produtosCar"
 import ModalEditarProduto from "../../../components/ModalEditarProduto"
@@ -92,13 +92,13 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Sidebar logado={logado} onLogout={() => setLogado(false)} onLogin={() => setLogado(true)} />
+      <Navbar />
       <div className="flex-1 bg-[#F6F3E4] overflow-auto">
         <div className="flex flex-col gap-[60px] p-[60px] px-[100px] max-w-[1400px] mx-auto w-full overflow-hidden">
 
           {/* Grupo produto */}
           <div className="flex flex-row gap-[20px] h-[552px]">
-            <img src="/Vector 112.png" alt="botão de retornar" className="cursor-pointer self-start py-[20px]" onClick={() => router.push('/')}/>
+            <img src="/Vector 112.png" alt="botão de retornar" className="cursor-pointer self-start py-[20px]" onClick={() => router.back()}/>
 
             <div className="flex flex-row gap-[10px] w-[704px] h-[552px]">
               <div className="flex flex-col gap-[8px]">
@@ -110,7 +110,8 @@ export default function Home() {
               </div>
               <div className="relative flex-1 bg-white rounded-[30px] overflow-hidden">
                 <img src={imagemSelecionada} className="w-full h-full rounded-[30px] object-contain" />
-                <img src={produto?.loja?.logo_url} className="cursor-pointer absolute left-120 top-4 h-[72px] w-[72px] rounded-full object-cover" />
+                <img src={produto?.loja?.logo_url} className="cursor-pointer absolute left-120 top-4 h-[72px] w-[72px] rounded-full object-cover" 
+                onClick={() => router.push(`/lojas/${lojaId}`)} />
               </div>
             </div>
 
@@ -150,6 +151,7 @@ export default function Home() {
 
           {/* Avaliações */}
           <div className="flex flex-col relative gap-[20px]">
+            <h1 className="text-[#000000] font-[family-name:var(--font-league-spartan)] text-[41px] font-[400]">Avaliações</h1>
             <CarrosselAvaliacoes
               avaliacoes={produto?.avaliacoes || []}
               usuarioLogadoId={usuarioId}

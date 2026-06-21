@@ -1,11 +1,12 @@
 'use client';
 import { useState } from "react";
 import axios from "axios";
-import {api} from "../../lib/api";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
   const router = useRouter();
+  const { login } = useAuth();
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -19,12 +20,7 @@ export default function Home() {
     }
 
     try {
-      const {data} = await api.post('/login', {
-        email,
-        senha,
-      });
-
-      localStorage.setItem('token', data.access_token);
+      await login(email, senha);
       router.push('/');
     } catch(error) {
       if(axios.isAxiosError(error)){
@@ -32,10 +28,7 @@ export default function Home() {
       }else {
         setErro("Erro inesperado");
       }
-  }
-
-
-
+    }
   }
 
   return (

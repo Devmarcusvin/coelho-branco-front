@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/navbar/navbar";
 import { api } from "@/lib/api";
+import Navbar from "@/components/navbar/navbar";
 
 interface Produto {
   id?: string | number;
@@ -152,11 +152,7 @@ export default function CategoriaEletronicos() {
 
         {/* ÁREA PRETA: NAVBAR + BANNER */}
         <div className="bg-[#000000] w-full">
-          <Sidebar
-            logado={logado}
-            onLogout={() => setLogado(false)}
-            onLogin={() => setLogado(true)}
-          />
+          <Navbar />
 
           <section
             className="w-full relative"

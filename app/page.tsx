@@ -65,7 +65,7 @@ const FILTROS_OPCOES = [
   { label: "Casa", icon: "🏠" },
 ];
 
-/* ---------- PRODUTOS ---------- */
+/* Produtos */
 
 function ProdutoCard({ produto }: { produto: ProdutoFeed }) {
   const router = useRouter();
@@ -96,7 +96,7 @@ function ProdutoCard({ produto }: { produto: ProdutoFeed }) {
       <p className="font-[family-name:var(--font-league-spartan)] font-bold text-[#171918] text-[18px]">
         {formatarPreco(produto.preco)}
       </p>
-      <p className={`text-[13px] font-bold mt-1 ${produto.disponivel ? "text-[#4CAF50]" : "text-[#E53935]"}`}>
+      <p className={`text-[13px] font-bold mt-1 ${produto.disponivel ? "text-[#C6E700]" : "text-[#AF052A]"}`}>
         {produto.disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
       </p>
     </div>
@@ -122,7 +122,7 @@ function ProdutosCarrossel({ titulo, destaque, produtos }: { titulo: string; des
   );
 }
 
-/* ---------- CATEGORIAS ---------- */
+/* Categorias */
 
 const categorias = [
   { nome: "Mercado", icon: "/healthicons_vegetables-outline.png" },
@@ -159,7 +159,7 @@ function CategoriasSecao() {
 }
 
 
-/* ---------- BANNER / BUSCA ---------- */
+/* baner e busca */
 
 function Banner({ busca, setBusca }: { busca: string; setBusca: (valor: string) => void }) {
   return (
@@ -201,7 +201,7 @@ function Banner({ busca, setBusca }: { busca: string; setBusca: (valor: string) 
   );
 }
 
-/* ---------- LOJAS ---------- */
+/* Loojas */
 
 function LojaCard({ loja }: { loja: LojaFeed }) {
   const router = useRouter();
@@ -285,7 +285,7 @@ function LojasSecao({ lojas }: { lojas: LojaFeed[] }) {
   );
 }
 
-/* ---------- TELA PRINCIPAL ---------- */
+/*  tela principal  */
 
 export default function Home() {
   const [telaAtiva, setTelaAtiva] = React.useState("feed");
@@ -314,7 +314,7 @@ export default function Home() {
       <div className="bg-[#000000] w-full">
 
         {/* NAVBAR LOGADA */}
-        <Navbar logado={true} onLogout={handleLogout} onLogin={() => {}} />
+        <Navbar />
 
         <Banner busca={busca} setBusca={setBusca} />
       </div>
@@ -341,7 +341,7 @@ export default function Home() {
   );
 }
 
-/* ---------- TELA DESLOGADA ---------- */
+/* tela deslogada */
 
 interface TelaDeslogadaProps {
   aoFazerLogin: () => void;
@@ -361,7 +361,7 @@ function TelaDeslogada({ aoFazerLogin, lojas, produtosAvaliados, produtosBaratos
       <div className="bg-[#000000] w-full">
 
         {/* NAVBAR DESLOGADA */}
-        <Navbar logado={false} onLogout={() => {}} onLogin={aoFazerLogin} />
+        <Navbar />
 
         <Banner busca={busca} setBusca={setBusca} />
       </div>
