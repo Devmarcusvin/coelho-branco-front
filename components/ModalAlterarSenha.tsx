@@ -4,7 +4,7 @@ interface ModalAlterarSenhaProps {
   isOpen: boolean;
   onClose: () => void;
   onBack?: () => void;
-  onSave?: (dados: { senhaAntiga: string; novaSenha: string }) => void;
+  onSave?: (dados: { email: string; novaSenha: string }) => void;
 }
 
 export default function ModalAlterarSenha({
@@ -13,172 +13,105 @@ export default function ModalAlterarSenha({
   onBack,
   onSave,
 }: ModalAlterarSenhaProps) {
-  const [senhaAntiga, setSenhaAntiga] = useState("");
+  const [email, setEmail] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSave = () => {
+  function resetar() {
+    setEmail("");
+    setNovaSenha("");
+    setConfirmarSenha("");
+    setErro("");
+  }
+
+  function fechar() {
+    resetar();
+    onClose();
+  }
+
+  async function handleSalvar() {
+    if (!email) {
+      setErro("Digite seu email.");
+      return;
+    }
     if (novaSenha !== confirmarSenha) {
       setErro("As senhas não coincidem.");
       return;
     }
-    if (novaSenha.length < 6) {
-      setErro("A nova senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
     setErro("");
-    onSave?.({ senhaAntiga, novaSenha });
-  };
+    setCarregando(true);
+    try {
+      await onSave?.({ email, novaSenha });
+    } finally {
+      setCarregando(false);
+    }
+  }
 
   return (
-    <div style={styles.overlay}>
-      <div style={styles.modal}>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/35 z-[1100]">
+      <div className="relative bg-[#f0eff4] rounded-3xl px-10 pt-12 pb-10 w-[340px] flex flex-col items-center gap-6 shadow-[0_8px_32px_rgba(0,0,0,0.15)]">
 
         {/* Botão voltar */}
-        <button style={styles.backBtn} onClick={onBack} aria-label="Voltar">
+        <button
+          onClick={onBack}
+          aria-label="Voltar"
+          className="absolute top-4 left-5 text-[28px] font-light text-[#333] leading-none cursor-pointer"
+        >
           ‹
         </button>
 
         {/* Botão fechar */}
-        <button style={styles.closeBtn} onClick={onClose} aria-label="Fechar">
+        <button
+          onClick={fechar}
+          aria-label="Fechar"
+          className="absolute top-[18px] right-[22px] text-[18px] text-[#333] leading-none cursor-pointer"
+        >
           ✕
         </button>
 
         {/* Ícone chave */}
-        <div style={styles.iconWrapper}>
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="22" cy="22" r="14" stroke="#7c3aed" strokeWidth="5" fill="none"/>
-            <line x1="31" y1="31" x2="54" y2="54" stroke="#7c3aed" strokeWidth="5" strokeLinecap="round"/>
-            <line x1="44" y1="44" x2="44" y2="54" stroke="#7c3aed" strokeWidth="5" strokeLinecap="round"/>
-            <line x1="50" y1="50" x2="54" y2="50" stroke="#7c3aed" strokeWidth="5" strokeLinecap="round"/>
-          </svg>
+        <div className="mt-2">
+          <img src="/chave.png" alt="Chave" className="w-16 h-16 object-contain" />
         </div>
 
-        {/* Campos */}
-        <div style={styles.fields}>
+        <div className="w-full flex flex-col gap-3">
           <input
-            style={styles.input}
-            placeholder="Senha Antiga"
-            type="password"
-            value={senhaAntiga}
-            onChange={(e) => setSenhaAntiga(e.target.value)}
+            className="w-full px-[18px] py-[14px] rounded-xl border-none text-[15px] text-gray-700 outline-none bg-white box-border shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+            placeholder="Email cadastrado"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
-            style={styles.input}
+            className="w-full px-[18px] py-[14px] rounded-xl border-none text-[15px] text-gray-700 outline-none bg-white box-border shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
             placeholder="Nova Senha"
             type="password"
             value={novaSenha}
             onChange={(e) => setNovaSenha(e.target.value)}
           />
           <input
-            style={styles.input}
+            className="w-full px-[18px] py-[14px] rounded-xl border-none text-[15px] text-gray-700 outline-none bg-white box-border shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
             placeholder="Confirmar Senha"
             type="password"
             value={confirmarSenha}
             onChange={(e) => setConfirmarSenha(e.target.value)}
           />
-          {erro && <p style={styles.erro}>{erro}</p>}
+          {erro && <p className="text-[#f43f5e] text-[13px] m-0 text-center">{erro}</p>}
         </div>
 
-        {/* Botão salvar */}
-        <button style={styles.btnSave} onClick={handleSave}>
-          Salvar Senha
+        <button
+          onClick={handleSalvar}
+          disabled={carregando}
+          className="w-full py-[14px] rounded-3xl border-none  text-white text-[18px] hover:bg-[#5028C4] cursor-pointer bg-[#6A38F3] font-[family-name:var(--font-league-spartan)]"
+        >
+          {carregando ? "Salvando..." : "Salvar Senha"}
         </button>
 
       </div>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  overlay: {
-    position: "fixed",
-    inset: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.35)",
-    zIndex: 1100,
-  },
-  modal: {
-    position: "relative",
-    background: "#f0eff4",
-    borderRadius: 24,
-    padding: "48px 40px 40px",
-    width: 340,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 24,
-    boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-  },
-  backBtn: {
-    position: "absolute",
-    top: 16,
-    left: 20,
-    background: "none",
-    border: "none",
-    fontSize: 28,
-    cursor: "pointer",
-    color: "#333",
-    lineHeight: 1,
-    padding: 0,
-    fontWeight: 300,
-  },
-  closeBtn: {
-    position: "absolute",
-    top: 18,
-    right: 22,
-    background: "none",
-    border: "none",
-    fontSize: 18,
-    cursor: "pointer",
-    color: "#333",
-    lineHeight: 1,
-    padding: 0,
-  },
-  iconWrapper: {
-    marginTop: 8,
-  },
-  fields: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
-  },
-  input: {
-    width: "100%",
-    padding: "14px 18px",
-    borderRadius: 12,
-    border: "none",
-    fontSize: 15,
-    color: "#374151",
-    outline: "none",
-    background: "#fff",
-    boxSizing: "border-box",
-    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-  },
-  erro: {
-    color: "#f43f5e",
-    fontSize: 13,
-    margin: 0,
-    textAlign: "center",
-  },
-  btnSave: {
-    width: "100%",
-    padding: "14px 0",
-    borderRadius: 24,
-    border: "none",
-    background: "linear-gradient(90deg, #a855f7, #7c3aed)",
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: 600,
-    cursor: "pointer",
-    letterSpacing: 0.3,
-    boxShadow: "0 2px 12px rgba(168,85,247,0.35)",
-    transition: "opacity 0.2s",
-  },
-};

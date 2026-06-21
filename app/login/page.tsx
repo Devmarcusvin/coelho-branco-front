@@ -3,6 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
+import ModalAlterarSenha from "@/components/ModalAlterarSenha";
 
 export default function Home() {
   const router = useRouter();
@@ -11,6 +13,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
+  const [modalSenhaAberto, setModalSenhaAberto] = useState(false);
 
   async function Login(){
     setErro(null);
@@ -28,6 +31,18 @@ export default function Home() {
       }else {
         setErro("Erro inesperado");
       }
+    }
+  }
+
+  async function handleSalvarNovaSenha(dados: { email: string; novaSenha: string }) {
+    try {
+      await api.patch("/auth/redefinir-senha", {
+        email: dados.email,
+        novaSenha: dados.novaSenha,
+      });
+      setModalSenhaAberto(false);
+    } catch (error) {
+      // erro 404 (email não encontrado) ou outro erro de servidor cai aqui
     }
   }
 
@@ -79,7 +94,10 @@ export default function Home() {
               {erro} </p>
           )}
 
-          <p className="text-[#FFFFFF] font-[family-name:var(--font-league-spartan)] text-[20px] underline text-center cursor-pointer font-[300]">
+          <p
+            onClick={() => setModalSenhaAberto(true)}
+            className="text-[#FFFFFF] font-[family-name:var(--font-league-spartan)] text-[20px] underline text-center cursor-pointer font-[300]"
+          >
             Esqueceu sua senha?</p>
 
           <button
@@ -95,6 +113,12 @@ export default function Home() {
 
         </div>
       </div>
+
+      <ModalAlterarSenha
+        isOpen={modalSenhaAberto}
+        onClose={() => setModalSenhaAberto(false)}
+        onSave={handleSalvarNovaSenha}
+      />
     </div>
   );
 }

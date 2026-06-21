@@ -62,16 +62,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     restaurar()
   }, [])
 
-  async function login(email: string, senha: string) {
-    const { data } = await api.post("/login", { email, senha })
-    localStorage.setItem("token", data.access_token)
+async function login(email: string, senha: string) {
+  const { data } = await api.post("/auth/login", { email, senha })
+  localStorage.setItem("token", data.access_token)
 
-    const id = getIdFromToken(data.access_token)
-    if (id) {
-      const { data: dadosUsuario } = await api.get(`/users/${id}`)
-      setUsuario(dadosUsuario)
-    }
+  const id = getIdFromToken(data.access_token)
+  if (id) {
+    const { data: dadosUsuario } = await api.get(`/users/${id}`)
+    setUsuario(dadosUsuario)
   }
+}
 
   async function recarregarUsuario() {
     const token = localStorage.getItem("token")
