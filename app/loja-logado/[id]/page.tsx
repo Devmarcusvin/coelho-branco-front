@@ -108,13 +108,13 @@ const AVALIACOES = [
 
 
 const produtosMelhorAvaliados: Produto[] = [
-  { id: 101, nome: "Bronzer", preco: "R$159,90", disponivel: true, img: "/bronzer.png", logo: "/rarebeauty.png" },
-  { id: 102, nome: "Blush", preco: "R$199,99", disponivel: true, img: "/blush.png", logo: "/rarebeauty.png" },
-  { id: 103, nome: "Perfume", preco: "R$349,90", disponivel: false, img: "/perfume.png", logo: "/rarebeauty.png" },
-  { id: 104, nome: "Iluminador", preco: "R$249,90", disponivel: true, img: "/iluminador.png", logo: "/rarebeauty.png" },
-  { id: 105, nome: "Mini Blush", preco: "R$89,90", disponivel: true, img: "/mini-blush.png", logo: "/rarebeauty.png" },
-  { id: 106, nome: "Lápis", preco: "R$59,90", disponivel: true, img: "/lapis.png", logo: "/rarebeauty.png" },
-  { id: 107, nome: "Primer", preco: "R$139,90", disponivel: false, img: "/primer.png", logo: "/rarebeauty.png" },
+  { id: 101, nome: "Contorno", preco: "R$159,90", disponivel: true, img: "/contorno_rare.png", logo: "/rarebeauty.png" },
+  { id: 102, nome: "Blush", preco: "R$199,99", disponivel: true, img: "/blusg.png", logo: "/rarebeauty.png" },
+  { id: 103, nome: "Perfume", preco: "R$349,90", disponivel: false, img: "/perfume_beauty.png", logo: "/rarebeauty.png" },
+  { id: 104, nome: "Iluminador", preco: "R$249,90", disponivel: true, img: "/iluminador_beauty.png", logo: "/rarebeauty.png" },
+  { id: 105, nome: "Mini Blush", preco: "R$89,90", disponivel: true, img: "/miniblush_beauty.png", logo: "/rarebeauty.png" },
+  { id: 106, nome: "Lápis", preco: "R$59,90", disponivel: true, img: "/lapis_labial.png", logo: "/rarebeauty.png" },
+  { id: 107, nome: "Primer", preco: "R$139,90", disponivel: false, img: "/primer_beauty.png", logo: "/rarebeauty.png" },
 ];
 
 
@@ -129,8 +129,8 @@ const IMAGENS_PLACEHOLDER = [
   "/po_beauty.png",
   "/perfume_beauty.png",
   "/bruma_beauty.png",
-  "/produto6.png",
-  "/produto6.png",
+  "/deliniador.png",
+  "/sombra.png",
 ];
 
 const PRODUTOS_POR_PAGINA = 12;
