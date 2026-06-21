@@ -38,7 +38,6 @@ function formatarPreco(preco: number) {
   return preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-
 function normalizar(texto: string) {
   return texto
     .normalize("NFD")
@@ -46,7 +45,6 @@ function normalizar(texto: string) {
     .toLowerCase()
     .trim();
 }
-
 
 function filtrarPorNome<T extends { nome: string }>(itens: T[], busca: string): T[] {
   const alvo = normalizar(busca);
@@ -144,7 +142,7 @@ function CategoriasSecao() {
         {categorias.map((categoria) => (
           <div
             key={categoria.nome}
-            onClick={() => router.push(`/produtoespecifico?categoria=${encodeURIComponent(categoria.nome)}`)}
+            onClick={() => router.push(`/produtoespecifico?categoria=${encodeURIComponent(categoria.nome.toLowerCase())}`)}
             className="flex bg-[#FFFFFF] w-[115px] h-[115px] shrink-0 rounded-[35px] items-center justify-center cursor-pointer hover:shadow-md transition-shadow"
           >
             <div className="flex flex-col items-center justify-center">
@@ -158,8 +156,7 @@ function CategoriasSecao() {
   );
 }
 
-
-/* baner e busca */
+/* Banner e busca */
 
 function Banner({ busca, setBusca }: { busca: string; setBusca: (valor: string) => void }) {
   return (
@@ -201,7 +198,7 @@ function Banner({ busca, setBusca }: { busca: string; setBusca: (valor: string) 
   );
 }
 
-/* Loojas */
+/* Lojas */
 
 function LojaCard({ loja }: { loja: LojaFeed }) {
   const router = useRouter();
@@ -285,7 +282,7 @@ function LojasSecao({ lojas }: { lojas: LojaFeed[] }) {
   );
 }
 
-/*  tela principal  */
+/* Tela principal */
 
 export default function Home() {
   const [telaAtiva, setTelaAtiva] = React.useState("feed");
@@ -309,22 +306,15 @@ export default function Home() {
 
   return (
     <div className="bg-[#F6F3E4] min-h-screen flex flex-col overflow-x-hidden">
-
-      {/* AREA PRETA */}
       <div className="bg-[#000000] w-full">
-
-        {/* NAVBAR LOGADA */}
         <Navbar />
-
         <Banner busca={busca} setBusca={setBusca} />
       </div>
 
-      {/* AREA BEGE */}
       <main className="w-full flex flex-col items-center px-10" style={{ paddingTop: "calc(2rem + 54px)" }}>
-
         {busca && (
           <p className="w-full max-w-[1218px] text-[#6A38F3] font-[family-name:var(--font-league-spartan)] text-[16px] mb-2">
-            Resultados para “{busca}”
+            Resultados para "{busca}"
           </p>
         )}
 
@@ -335,13 +325,12 @@ export default function Home() {
         <ProdutosCarrossel titulo="Produtos" destaque="recém adicionados" produtos={filtrarPorNome(produtosRecentes, busca)} />
 
         <LojasSecao lojas={filtrarPorNome(lojas, busca)} />
-
       </main>
     </div>
   );
 }
 
-/* tela deslogada */
+/* Tela deslogada */
 
 interface TelaDeslogadaProps {
   aoFazerLogin: () => void;
@@ -356,22 +345,15 @@ function TelaDeslogada({ aoFazerLogin, lojas, produtosAvaliados, produtosBaratos
 
   return (
     <div className="bg-[#F6F3E4] min-h-screen flex flex-col overflow-x-hidden">
-
-      {/* AREA PRETA */}
       <div className="bg-[#000000] w-full">
-
-        {/* NAVBAR DESLOGADA */}
         <Navbar />
-
         <Banner busca={busca} setBusca={setBusca} />
       </div>
 
-      {/* AREA BEGE */}
       <main className="w-full flex flex-col items-center px-10" style={{ paddingTop: "calc(2rem + 54px)" }}>
-
         {busca && (
           <p className="w-full max-w-[1218px] text-[#6A38F3] font-[family-name:var(--font-league-spartan)] text-[16px] mb-2">
-            Resultados para “{busca}”
+            Resultados para "{busca}"
           </p>
         )}
 
@@ -382,7 +364,6 @@ function TelaDeslogada({ aoFazerLogin, lojas, produtosAvaliados, produtosBaratos
         <ProdutosCarrossel titulo="Produtos" destaque="recém adicionados" produtos={filtrarPorNome(produtosRecentes, busca)} />
 
         <LojasSecao lojas={filtrarPorNome(lojas, busca)} />
-
       </main>
     </div>
   );

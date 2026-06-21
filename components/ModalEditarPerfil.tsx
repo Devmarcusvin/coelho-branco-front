@@ -60,33 +60,41 @@ export default function ModalEditarPerfil({
       const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
       const usuarioId = payload?.sub ?? null;
 
-      if (avatarFile && usuarioId) {
-        // Converte a foto para base64
+      if (!usuarioId) {
+        throw new Error("Usuário não identificado");
+      }
+
+      // Monta o payload sempre com nome, username e email
+      const body: Record<string, any> = { nome, username, email };
+
+      // Se uma foto nova foi selecionada, converte para base64 e adiciona ao payload
+      if (avatarFile) {
         const base64 = await new Promise<string>((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result as string);
           reader.readAsDataURL(avatarFile);
         });
-
-        const response = await fetch(`http://localhost:3333/users/${usuarioId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({ foto_perfil_url: base64 }),
-        });
-
-        if (!response.ok) throw new Error("Falha ao salvar foto");
-
-        const data = await response.json();
-        fotoFinal = data.foto_perfil_url;
+        body.foto_perfil_url = base64;
       }
+
+      const response = await fetch(`http://localhost:3001/users/${usuarioId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) throw new Error("Falha ao salvar perfil");
+
+      const data = await response.json();
+      fotoFinal = data.foto_perfil_url ?? fotoFinal;
 
       onSave?.({ nome, username, email, avatarUrl: fotoFinal });
     } catch (err) {
       console.error("ERRO:", err);
-      alert("Não foi possível salvar a foto. Tente novamente.");
+      alert("Não foi possível salvar o perfil. Tente novamente.");
     } finally {
       setSalvando(false);
     }
