@@ -30,7 +30,7 @@ export default function Home() {
     }
 
     try {
-      await axios.post("http://localhost:3333/users", {
+      await axios.post("http://localhost:3001/users", {
         name: form.name,
         username: form.username,
         email: form.email,
@@ -69,18 +69,30 @@ export default function Home() {
             <input name="password" type={showSenha ? "text" : "password"} placeholder="Senha" value={form.password} onChange={handleChange}
               className="bg-[#F6F3E4] h-[46px] w-[504px] text-[#171918] placeholder:text-[#858585] font-[family-name:var(--font-league-spartan)] rounded-[72px] pl-7 placeholder:text-[25px] text-[25px] placeholder:font-[300] focus:outline-2 focus:outline-[#6A38F3]"
             />
-            <img src="/iconamoon_eye-thin.svg" alt="mostrar senha" onClick={() => setShowSenha(!showSenha)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer"
-            />
+            {showSenha ? (
+              <img src="/icon_ocultar.png" alt="Ocultar senha" onClick={() => setShowSenha(false)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer opacity-40"
+              />
+            ) : (
+              <img src="/iconamoon_eye-thin.svg" alt="Mostrar senha" onClick={() => setShowSenha(true)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer"
+              />
+            )}
           </div>
 
           <div className="relative">
             <input name="confirmPassword" type={showConfirm ? "text" : "password"} placeholder="Confirmar Senha" value={form.confirmPassword} onChange={handleChange}
               className="bg-[#F6F3E4] h-[46px] w-[504px] text-[#171918] placeholder:text-[#858585] font-[family-name:var(--font-league-spartan)] rounded-[72px] pl-7 placeholder:text-[25px] text-[25px] placeholder:font-[300] focus:outline-2 focus:outline-[#6A38F3]"
             />
-            <img src="/iconamoon_eye-thin.svg" alt="mostrar senha" onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer"
-            />
+            {showConfirm ? (
+              <img src="/icon_ocultar.png" alt="Ocultar senha" onClick={() => setShowConfirm(false)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer opacity-40"
+              />
+            ) : (
+              <img src="/iconamoon_eye-thin.svg" alt="Mostrar senha" onClick={() => setShowConfirm(true)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer"
+              />
+            )}
           </div>
 
           {erro && <p className="text-red-500 text-[18px]">{erro}</p>}
